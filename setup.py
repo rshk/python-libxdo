@@ -8,7 +8,11 @@ setup(
     version=version,
     packages=find_packages(),
     url='',
-    license='Apache Software License',
+
+    # ..or whatever, actually..
+    # Which is the xdotool license, btw?
+    license='BSD License',
+
     author='Samuele Santi',
     author_email='samuele@samuelesanti.com',
     description='Python bindings for libxdo',
@@ -16,7 +20,8 @@ setup(
     install_requires=install_requires,
     # test_suite='tests',
     classifiers=[
-        "License :: OSI Approved :: Apache Software License",
+        # "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: BSD License",
 
         "Development Status :: 1 - Planning",
         # "Development Status :: 2 - Pre-Alpha",
