@@ -10,3 +10,13 @@ way to use the C library, of course..)
 **WARNING** The project is still work in progress!
 Only a small part of the library is supported, and tests / documentation are missing.
 Use with care (and make sure to report any issue you should find!)
+
+
+## Example usage
+
+```python
+from xdo import Xdo
+xdo = Xdo()
+win_id = xdo.select_window_with_click()
+xdo.enter_text_window(win_id, 'Python rocks!')
+```
