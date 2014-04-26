@@ -28,6 +28,8 @@ https://rshk.github.io/python-libxdo
 
 ## Example usage
 
+Ask the user to click a window with the mouse, then write "Python rocks!" to that window.
+
 ```python
 from xdo import Xdo
 xdo = Xdo()
@@ -40,7 +42,7 @@ xdo.enter_text_window(win_id, 'Python rocks!')
 
 The library is currently tested on:
 
-| OS | Architecture | libxdo version | Test result   |
-| -- | -------------| -------------- | ------------- |
+| OS     | Architecture | libxdo version | Test result   |
+| ------ | ------------ | -------------- | ------------- |
 | Debian GNU/Linux "jessie" (testing) | amd64 | 3.20130111.1-3.1 | success |
-|   |   |   |   |
+
