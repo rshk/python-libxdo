@@ -57,6 +57,10 @@ SIZE_USEHINTS_Y = 1 << 2
 CURRENTWINDOW = 0
 
 
+KeyCode = c_char  # unsinged char
+KeySym = c_ulong  # XID -> unsigned long
+
+
 class charcodemap_t(Structure):
     """
     Map character to whatever information we need to be able to send
@@ -64,27 +68,28 @@ class charcodemap_t(Structure):
     """
 
     _fields_ = [
-        # wchar_t key; /** the letter for this key, like 'a' */
+        # wchar_t key; // the letter for this key, like 'a'
         ('key', c_wchar),
 
-        #   KeyCode code; /** the keycode that this key is on */
-        ('code', c_char),  # 1 byte struct
+        # KeyCode code; // the keycode that this key is on
+        ('code', KeyCode),
 
-        #   KeySym symbol; /** the symbol representing this key */
-        ('code', c_char * 8),  # 8 bytes struct
+        # KeySym symbol; // the symbol representing this key
+        ('symbol', KeySym),
 
-        #   int group; /** the keyboard group that has this key in it */
+        # int group; // the keyboard group that has this key in it
         ('group', c_int),
 
-        #   int modmask; /** the modifiers to apply when sending this key */
-        #    /** if this key need to be bound at runtime because it does not
-        #     * exist in the current keymap, this will be set to 1. */
+        # int modmask; // the modifiers to apply when sending this key
+        #              // if this key need to be bound at runtime because
+        #              // it does not exist in the current keymap, this will
+        #              // be set to 1.
         ('modmask', c_int),
 
-        #   int needs_binding;
+        # int needs_binding;
         ('needs_binding', c_int),
     ]
-    # } charcodemap_t;
+
 
 # typedef enum {
 #   XDO_FEATURE_XTEST, /** Is XTest available? */

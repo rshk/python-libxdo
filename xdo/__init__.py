@@ -754,6 +754,14 @@ class Xdo(object):
         return _gen_input_mask(mask)
 
     def get_symbol_map(self):
+        """
+        If you need the symbol map, use this method.
+
+        The symbol map is an array of string pairs mapping common tokens
+        to X Keysym strings, such as "alt" to "Alt_L"
+
+        :return: array of strings.
+        """
         # todo: make sure we return a list of strings!
         sm = _libxdo.xdo_get_symbol_map()
 
@@ -769,6 +777,107 @@ class Xdo(object):
                 return ret
             ret.append(c)
             i += 1
+
+    def get_active_modifiers(self):
+        """
+        Get a list of active keys. Uses XQueryKeymap.
+
+        :return: list of charcodemap_t instances
+        """
+        keys = ctypes.pointer(charcodemap_t())
+        nkeys = ctypes.c_int(0)
+
+        _libxdo.xdo_get_active_modifiers(
+            self._xdo, ctypes.byref(keys), ctypes.byref(nkeys))
+        return [keys[i] for i in xrange(nkeys.value)]
+
+    def clear_active_modifiers(self, window, mods=None):
+        """
+        Send any events necesary to clear the the active modifiers.
+        For example, if you are holding 'alt' when xdo_get_active_modifiers is
+        called, then this method will send a key-up for 'alt'
+        """
+        raise NotImplementedError()
+
+    def set_active_modifiers(self, window, mods=None):
+        """
+        Send any events necessary to make these modifiers active.
+        This is useful if you just cleared the active modifiers and then wish
+        to restore them after.
+        """
+        raise NotImplementedError()
+
+    def get_desktop_viewport(self):
+        """
+        Get the position of the current viewport.
+
+        This is only relevant if your window manager supports
+        ``_NET_DESKTOP_VIEWPORT``.
+        """
+        raise NotImplementedError()
+
+    def set_desktop_viewport(self, x, y):
+        """
+        Set the position of the current viewport.
+
+        This is only relevant if your window manager supports
+        ``_NET_DESKTOP_VIEWPORT``
+        """
+        raise NotImplementedError()
+
+    def kill_window(self):
+        """
+        Kill a window and the client owning it.
+        """
+        raise NotImplementedError()
+
+    XDO_FIND_PARENTS = 0
+    XDO_FIND_CHILDREN = 1
+
+    def find_window_client(self):
+        """
+        Find a client window (child) in a given window. Useful if you get the
+        window manager's decorator window rather than the client window.
+        """
+        raise NotImplementedError()
+
+    def get_window_name(self):
+        """
+        Get a window's name, if any.
+        """
+        raise NotImplementedError()
+
+    def enable_feature(self):
+        """
+        Enable an xdo feature.
+
+        This function is mainly used by libxdo itself, however,
+        you may find it useful in your own applications.
+
+        :see: XDO_FEATURES
+        """
+        raise NotImplementedError()
+
+    def has_feature(self):
+        """
+        Check if a feature is enabled.
+
+        This function is mainly used by libxdo itself, however,
+        you may find it useful in your own applications.
+
+        :see: XDO_FEATURES
+        """
+        raise NotImplementedError()
+
+    def get_viewport_dimensions(self):
+        """
+        Query the viewport (your display) dimensions
+
+        If Xinerama is active and supported, that api internally is used.
+        If Xineram is disabled, we will report the root window's dimensions
+        for the given screen.
+        """
+        raise NotImplementedError()
 
     def __del__(self):
         _libxdo.xdo_free(self._xdo)
