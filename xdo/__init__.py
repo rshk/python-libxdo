@@ -627,9 +627,20 @@ class Xdo(object):
             Only return windows from this PID
         :param only_visible:
             If True, only return visible windows
-
+        :param screen:
+            Search only windows on this screen
+        :param require:
+            If True, will match ALL conditions. Otherwise, windows matching
+            ANY condition will be returned.
+        :param searchmask:
+            Search mask, for advanced usage. Leave this alone if you
+            don't kwnow what you are doing.
+        :param limit:
+            Maximum number of windows to list. Zero means no limit.
+        :param max_depth:
+            Maximum depth to return. Defaults to -1, meaning "no limit".
         :return:
-            A list of window ids
+            A list of window ids matching query.
         """
         windowlist_ret = ctypes.pointer(window_t(0))
         nwindows_ret = ctypes.c_uint(0)
