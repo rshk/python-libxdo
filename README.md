@@ -12,6 +12,13 @@ Only a small part of the library is supported, and tests / documentation are mis
 Use with care (and make sure to report any issue you should find!)
 
 
+## Documentation
+
+Documentation is hosted on Read The Docs:
+
+http://python-libxdo.readthedocs.org/
+
+
 ## Example usage
 
 ```python
