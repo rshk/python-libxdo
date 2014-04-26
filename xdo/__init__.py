@@ -4,7 +4,7 @@ from ctypes import POINTER
 from collections import namedtuple
 
 from .xdo import libxdo as _libxdo
-from .xdo import charcodemap_t, window_t, screen_t, xdo_search_t
+from .xdo import charcodemap_t, window_t, Screen, xdo_search_t, Atom
 
 # We simply import constants from the "wrapper" module
 # in the package namespace
@@ -18,6 +18,7 @@ mouse_location = namedtuple('mouse_location', 'x,y,screen_num')
 mouse_location2 = namedtuple('mouse_location2', 'x,y,screen_num,window')
 window_location = namedtuple('window_location', 'x,y,screen')
 window_size = namedtuple('window_size', 'width,height')
+input_mask = namedtuple('input_mask', 'shift,lock,control,mod1,mod2,mod3,mod4,mod5')  # noqa
 
 
 # Mouse button constants
@@ -36,6 +37,19 @@ MOD_Mod2 = 1 << 4
 MOD_Mod3 = 1 << 5
 MOD_Mod4 = 1 << 6
 MOD_Mod5 = 1 << 7
+
+
+def _gen_input_mask(mask):
+    """Generate input mask from bytemask"""
+    return input_mask(
+        shift=bool(mask & MOD_Shift),
+        lock=bool(mask & MOD_Lock),
+        control=bool(mask & MOD_Control),
+        mod1=bool(mask & MOD_Mod1),
+        mod2=bool(mask & MOD_Mod2),
+        mod3=bool(mask & MOD_Mod3),
+        mod4=bool(mask & MOD_Mod4),
+        mod5=bool(mask & MOD_Mod5))
 
 
 class Xdo(object):
@@ -277,6 +291,13 @@ class Xdo(object):
 
     def get_active_keys_to_keycode_list(self):
         """Get a list of active keys. Uses XQueryKeymap"""
+
+        try:
+            _libxdo.xdo_get_active_keys_to_keycode_list
+        except AttributeError:
+            # Apparently, this was implemented in a later version..
+            raise NotImplementedError()
+
         keys = POINTER(charcodemap_t)
         nkeys = ctypes.c_int(0)
         _libxdo.xdo_get_active_keys_to_keycode_list(
@@ -518,7 +539,7 @@ class Xdo(object):
         """
         Get a window's location.
         """
-        screen_ret = POINTER(screen_t)
+        screen_ret = POINTER(Screen)
         x_ret = ctypes.c_int(0)
         y_ret = ctypes.c_int(0)
         _libxdo.xdo_get_window_location(
@@ -694,6 +715,60 @@ class Xdo(object):
             ctypes.byref(nwindows_ret))
 
         return [windowlist_ret[i] for i in xrange(nwindows_ret.value)]
+
+    def get_window_property_by_atom(self, window, atom):
+        # todo: figure out what exactly this method does, and implement it
+        raise NotImplemented(
+            "get_window_property_by_atom() is not implemented (yet)")
+
+    def get_window_property(self, window, name):
+        value = ctypes.c_char_p()  # unsigned char **value
+        nitems = ctypes.c_long()
+        type_ = Atom()
+        size = ctypes.c_int(0)
+
+        _libxdo.xdo_get_window_property(
+            self._xdo, window, name, ctypes.byref(value), ctypes.byref(nitems),
+            ctypes.byref(type_), ctypes.byref(size))
+
+        # todo: we need to convert atoms into their actual type..
+        values = []
+        for i in xrange(nitems):
+            i_val = value[i]
+            # i_type = type_[i]
+            values.append(i_val)
+            # todo: perform type conversion for "Atom"s of this type?
+            # todo: how does the "Atom" thing work?
+
+        return values
+
+    def get_input_state(self):
+        """
+        Get the current input state.
+
+        :return:
+            a namedtuple with the following (boolean) fields:
+            shift, lock, control, mod1, mod2, mod3, mod4, mod5
+        """
+        mask = _libxdo.xdo_get_input_state(self._xdo)
+        return _gen_input_mask(mask)
+
+    def get_symbol_map(self):
+        # todo: make sure we return a list of strings!
+        sm = _libxdo.xdo_get_symbol_map()
+
+        # Return value is like:
+        # ['alt', 'Alt_L', ..., None, None, None, ...]
+        # We want to return only values up to the first None.
+        # todo: any better solution than this?
+        i = 0
+        ret = []
+        while True:
+            c = sm[i]
+            if c is None:
+                return ret
+            ret.append(c)
+            i += 1
 
     def __del__(self):
         _libxdo.xdo_free(self._xdo)

@@ -341,9 +341,9 @@ class Screen(Structure):
 
 # From X11/Xdefs.h
 # typedef unsigned long Atom;
-atom_t = c_ulong
+Atom = atom_t = c_ulong
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # xdo_t* xdo_new(const char *display);
 libxdo.xdo_new.argtypes = (c_char_p,)
 libxdo.xdo_new.restype = POINTER(xdo_t)
@@ -356,7 +356,7 @@ environment variable DISPLAY just like XOpenDisplay(NULL).
 :return: Pointer to a new xdo_t or NULL on failure
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # xdo_t* xdo_new_with_opened_display(Display *xdpy, const char *display,
 #                                    int close_display_when_freed);
 libxdo.xdo_new_with_opened_display.__doc__ = """\
@@ -368,7 +368,7 @@ Create a new xdo_t instance with an existing X11 Display instance.
     xdo_free is called. Otherwise, we leave it open.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # const char *xdo_version(void);
 libxdo.xdo_version.argtypes = ()
 libxdo.xdo_version.restype = c_char_p
@@ -376,7 +376,7 @@ libxdo.xdo_version.__doc__ = """\
 Return a string representing the version of this library
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # void xdo_free(xdo_t *xdo);
 libxdo.xdo_free.argtypes = (POINTER(xdo_t),)
 libxdo.xdo_free.__doc__ = """\
@@ -385,7 +385,7 @@ Free and destroy an xdo_t instance.
 If close_display_when_freed is set, then we will also close the Display.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_move_mouse(const xdo_t *xdo, int x, int y, int screen);
 libxdo.xdo_move_mouse.argtypes = (
     POINTER(xdo_t), c_int, c_int, c_int)
@@ -399,7 +399,7 @@ Move the mouse to a specific location.
 :param screen: the screen (number) you want to move on.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_move_mouse_relative_to_window(const xdo_t *xdo,
 #     Window window, int x, int y);
 libxdo.xdo_move_mouse_relative_to_window.argtypes = (
@@ -414,7 +414,7 @@ of a window.
 :param y: the target Y coordinate on the screen in pixels.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_move_mouse_relative(const xdo_t *xdo, int x, int y);
 libxdo.xdo_move_mouse_relative.argtypes = (POINTER(xdo_t), c_int, c_int)
 libxdo.xdo_move_mouse_relative.restype = c_int
@@ -426,7 +426,7 @@ Move the mouse relative to it's current position.
 :param y: the distance in pixels to move on the Y axis.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_mouse_down(const xdo_t *xdo, Window window, int button);
 libxdo.xdo_mouse_down.argtypes = (POINTER(xdo_t), POINTER(window_t))
 libxdo.xdo_mouse_down.restype = c_int
@@ -440,7 +440,7 @@ location.
    right, 4 is wheel up, 5 is wheel down.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_mouse_up(const xdo_t *xdo, Window window, int button);
 libxdo.xdo_mouse_up.argtypes = (POINTER(xdo_t), POINTER(window_t), c_int)
 libxdo.xdo_mouse_up.restype = c_int
@@ -454,7 +454,7 @@ location.
    right, 4 is wheel up, 5 is wheel down.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_mouse_location(const xdo_t *xdo, int *x, int *y,
 #                            int *screen_num);
 libxdo.xdo_get_mouse_location.argtypes = (POINTER(xdo_t), POINTER(c_int),
@@ -469,7 +469,7 @@ Get the current mouse location (coordinates and screen number).
 :param screen_num: integer pointer where the screen number will be stored
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_window_at_mouse(const xdo_t *xdo, Window *window_ret);
 libxdo.xdo_get_window_at_mouse.argtypes = (POINTER(xdo_t), POINTER(window_t))
 libxdo.xdo_get_window_at_mouse.restype = c_int
@@ -480,7 +480,7 @@ Get the window the mouse is currently over
 :param window_ret: Winter pointer where the window will be stored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_mouse_location2(const xdo_t *xdo, int *x_ret, int *y_ret,
 #                             int *screen_num_ret, Window *window_ret);
 libxdo.xdo_get_mouse_location2.argtypes = (
@@ -501,7 +501,7 @@ Useful if you only want the 'y' coordinate, for example.
   will be stored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_wait_for_mouse_move_from(const xdo_t *xdo, int origin_x,
 #                                  int origin_y);
 libxdo.xdo_wait_for_mouse_move_from.argtypes = (POINTER(xdo_t), c_int, c_int)
@@ -515,7 +515,7 @@ until the condition has been satisified.
 :param origin_y: the Y position you expect the mouse to move from
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_wait_for_mouse_move_to(const xdo_t *xdo, int dest_x, int dest_y);
 libxdo.xdo_wait_for_mouse_move_to.argtypes = (POINTER(xdo_t), c_int, c_int)
 libxdo.xdo_wait_for_mouse_move_to.restype = c_int
@@ -528,7 +528,7 @@ until the condition has been satisfied.
 :param dest_y: the Y position you expect the mouse to move to
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_click_window(const xdo_t *xdo, Window window, int button);
 libxdo.xdo_click_window.argtypes = (POINTER(xdo_t), window_t, c_int)
 libxdo.xdo_click_window.restype = c_int
@@ -541,7 +541,7 @@ Send a click for a specific mouse button at the current mouse location.
    right, 4 is wheel up, 5 is wheel down.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_click_window_multiple(const xdo_t *xdo, Window window, int button,
 #                        int repeat, useconds_t delay);
 libxdo.xdo_click_window_multiple.argtypes = (
@@ -557,7 +557,7 @@ location.
    right, 4 is wheel up, 5 is wheel down.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_enter_text_window(const xdo_t *xdo, Window window,
 #     const char *string, useconds_t delay);
 libxdo.xdo_enter_text_window.argtypes = (
@@ -576,7 +576,7 @@ want instead xdo_send_keysequence_window(...).
     12000 is a decent choice if you don't have other plans.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_send_keysequence_window(const xdo_t *xdo, Window window,
 #                     const char *keysequence, useconds_t delay);
 libxdo.xdo_send_keysequence_window.argtypes = (
@@ -605,7 +605,7 @@ use xdo_enter_text_window.
 :param delay: The delay between keystrokes in microseconds.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_send_keysequence_window_up(const xdo_t *xdo, Window window,
 #                        const char *keysequence, useconds_t delay);
 libxdo.xdo_send_keysequence_window_up.argtypes = (
@@ -618,7 +618,7 @@ Send key release (up) events for the given key sequence.
 :see: xdo_send_keysequence_window
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_send_keysequence_window_down(const xdo_t *xdo, Window window,
 #                          const char *keysequence, useconds_t delay);
 libxdo.xdo_send_keysequence_window_down.argtypes = (
@@ -631,7 +631,7 @@ Send key press (down) events for the given key sequence.
 :see: xdo_send_keysequence_window
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_send_keysequence_window_list_do(const xdo_t *xdo, Window window,
 #                             charcodemap_t *keys, int nkeys,
 #                             int pressed, int *modifier, useconds_t delay);
@@ -652,23 +652,32 @@ Send a series of keystrokes.
 :param delay: The delay between keystrokes in microseconds.
 """
 
-# ----------------------------------------------------------------------
-# todo: this function seems to be missing -> double-check
-# # int xdo_get_active_keys_to_keycode_list(
-# #     const xdo_t *xdo, charcodemap_t **keys, int *nkeys);
-# libxdo.xdo_get_active_keys_to_keycode_list.argtypes = (
-#     POINTER(xdo_t), POINTER(POINTER(charcodemap_t)), POINTER(c_int))
-# libxdo.xdo_get_active_keys_to_keycode_list.restype = c_int
-# libxdo.xdo_get_active_keys_to_keycode_list.errcheck = _errcheck
-# libxdo.xdo_get_active_keys_to_keycode_list.__doc__ = """\
-# Get a list of active keys. Uses XQueryKeymap.
+# ============================================================================
+# int xdo_get_active_keys_to_keycode_list(
+#     const xdo_t *xdo, charcodemap_t **keys, int *nkeys);
 
-# :param keys: Pointer to the array of charcodemap_t that will be allocated
-#    by this function.
-# :param nkeys: Pointer to integer where the number of keys will be stored.
-# """
+# --- Note -------------------------------------------------------------
+# This seems to be missing in version 3.20140213.1 (Debian Jessie)
+# but is there in current Git master.
+# Let's configure it only if it is available (meaning we are using
+# a recent version of the library)
 
-# ----------------------------------------------------------------------
+try:
+    libxdo.xdo_get_active_keys_to_keycode_list.argtypes = (
+        POINTER(xdo_t), POINTER(POINTER(charcodemap_t)), POINTER(c_int))
+    libxdo.xdo_get_active_keys_to_keycode_list.restype = c_int
+    libxdo.xdo_get_active_keys_to_keycode_list.errcheck = _errcheck
+    libxdo.xdo_get_active_keys_to_keycode_list.__doc__ = """\
+    Get a list of active keys. Uses XQueryKeymap.
+
+    :param keys: Pointer to the array of charcodemap_t that will be allocated
+       by this function.
+    :param nkeys: Pointer to integer where the number of keys will be stored.
+    """
+except AttributeError:
+    pass
+
+# ============================================================================
 # int xdo_wait_for_window_map_state(const xdo_t *xdo, Window wid,
 #     int map_state);
 libxdo.xdo_wait_for_window_map_state.argtypes = (
@@ -688,12 +697,12 @@ State possibilities:
 :param map_state: the state to wait for.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # Constants for xdo_wait_for_window_size()
 SIZE_TO = 0
 SIZE_FROM = 1
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_wait_for_window_size(
 #     const xdo_t *xdo, Window window, unsigned int width,
 #     unsigned int height, int flags, int to_or_from);
@@ -705,7 +714,7 @@ libxdo.xdo_wait_for_window_size.__doc__ = """\
 """
 
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_move_window(const xdo_t *xdo, Window wid, int x, int y);
 libxdo.xdo_move_window.argtypes = (
     POINTER(xdo_t), window_t, c_int, c_int)
@@ -721,7 +730,7 @@ The top left corner of the window will be moved to the x,y coordinate.
 :param y: the Y coordinate to move to.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_translate_window_with_sizehint(
 #     const xdo_t *xdo, Window window,
 #     unsigned int width, unsigned int height,
@@ -745,7 +754,7 @@ resize increment and base size to your given width and height values.
 """
 
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_window_size(
 #     const xdo_t *xdo, Window wid, int w, int h, int flags);
 libxdo.xdo_set_window_size.argtypes = (
@@ -763,7 +772,7 @@ Change the window size.
 """
 
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_window_property(const xdo_t *xdo, Window wid,
 #     const char *property, const char *value);
 libxdo.xdo_set_window_property.argtypes = (
@@ -781,7 +790,7 @@ Example properties you can change are WM_NAME, WM_ICON_NAME, etc.
 """
 
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_window_class(const xdo_t *xdo, Window wid, const char *name,
 #                         const char *_class);
 libxdo.xdo_set_window_class.argtypes = (
@@ -795,7 +804,7 @@ Change the window's classname and or class.
 :param _class: The new class. If NULL, no change.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_window_urgency (const xdo_t *xdo, Window wid, int urgency);
 libxdo.xdo_set_window_urgency.argtypes = (
     POINTER(xdo_t), window_t, c_int)
@@ -805,7 +814,7 @@ libxdo.xdo_set_window_urgency.__doc__ = """\
 Sets the urgency hint for a window.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_window_override_redirect(const xdo_t *xdo, Window wid,
 #                                      int override_redirect);
 libxdo.xdo_set_window_override_redirect.argtypes = (
@@ -821,7 +830,7 @@ window, etc. If you set it to 0, the window manager will see it like a
 normal application window.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_focus_window(const xdo_t *xdo, Window wid);
 libxdo.xdo_focus_window.argtypes = (POINTER(xdo_t), window_t)
 libxdo.xdo_focus_window.restype = c_int
@@ -833,7 +842,7 @@ Focus a window.
 :param wid: the window to focus.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_raise_window(const xdo_t *xdo, Window wid);
 libxdo.xdo_raise_window.argtypes = (POINTER(xdo_t), window_t)
 libxdo.xdo_raise_window.restype = c_int
@@ -845,7 +854,7 @@ termed as bringing the window forward.
 :param wid: The window to raise.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_focused_window(const xdo_t *xdo, Window *window_ret);
 libxdo.xdo_get_focused_window.argtypes = (POINTER(xdo_t), POINTER(window_t))
 libxdo.xdo_get_focused_window.restype = c_int
@@ -858,7 +867,7 @@ Get the window currently having focus.
     will be stored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_wait_for_window_focus(const xdo_t *xdo, Window window,
 #     int want_focus);
 libxdo.xdo_wait_for_window_focus.argtypes = (
@@ -872,7 +881,7 @@ Wait for a window to have or lose focus.
 :param want_focus: If 1, wait for focus. If 0, wait for loss of focus.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_pid_window(const xdo_t *xdo, Window window);
 libxdo.xdo_get_pid_window.argtypes = (POINTER(xdo_t), window_t)
 libxdo.xdo_get_pid_window.restype = c_int
@@ -884,7 +893,7 @@ It looks at the _NET_WM_PID property of the window.
 :return: the process id or 0 if no pid found.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_focused_window_sane(const xdo_t *xdo, Window *window_ret);
 libxdo.xdo_get_focused_window_sane.argtypes = (
     POINTER(xdo_t), POINTER(window_t))
@@ -901,7 +910,7 @@ to be the window having focused.
     will be stored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_activate_window(const xdo_t *xdo, Window wid);
 libxdo.xdo_activate_window.argtypes = (
     POINTER(xdo_t), window_t)
@@ -919,7 +928,7 @@ Uses _NET_ACTIVE_WINDOW from the EWMH spec.
 :param wid: the window to activate
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_wait_for_window_active(const xdo_t *xdo, Window window, int active);
 libxdo.xdo_wait_for_window_active.argtypes = (POINTER(xdo_t), window_t, c_int)
 libxdo.xdo_wait_for_window_active.restype = c_int
@@ -934,7 +943,7 @@ Uses _NET_ACTIVE_WINDOW from the EWMH spec.
 :param active: If 1, wait for active. If 0, wait for inactive.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_map_window(const xdo_t *xdo, Window wid);
 libxdo.xdo_map_window.argtypes = (POINTER(xdo_t), window_t)
 libxdo.xdo_map_window.restype = c_int
@@ -946,7 +955,7 @@ not currently mapped.
 :param wid: the window to map.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_unmap_window(const xdo_t *xdo, Window wid);
 libxdo.xdo_unmap_window.argtypes = (POINTER(xdo_t), window_t)
 libxdo.xdo_unmap_window.restype = c_int
@@ -957,7 +966,7 @@ Unmap a window
 :param wid: the window to unmap
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_minimize_window(const xdo_t *xdo, Window wid);
 libxdo.xdo_minimize_window.argtypes = (POINTER(xdo_t), window_t)
 libxdo.xdo_minimize_window.restype = c_int
@@ -966,7 +975,7 @@ libxdo.xdo_minimize_window.__doc__ = """\
 Minimize a window.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_reparent_window(const xdo_t *xdo, Window wid_source,
 #     Window wid_target);
 libxdo.xdo_reparent_window.argtypes = (POINTER(xdo_t), window_t, window_t)
@@ -979,7 +988,7 @@ Reparents a window
 :param wid_target: the new parent window
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_window_location(const xdo_t *xdo, Window wid,
 #                             int *x_ret, int *y_ret, Screen **screen_ret);
 libxdo.xdo_get_window_location.argtypes = (
@@ -1003,7 +1012,7 @@ Get a window's location.
     stored. If NULL, this parameter is ignored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_window_size(const xdo_t *xdo, Window wid,
 #     unsigned int *width_ret, unsigned int *height_ret);
 libxdo.xdo_get_window_size.argtypes = (
@@ -1018,7 +1027,7 @@ Get a window's size.
 :param height_ret: pointer to unsigned int where the height is stored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_active_window(const xdo_t *xdo, Window *window_ret);
 libxdo.xdo_get_active_window.argtypes = (POINTER(xdo_t), POINTER(window_t))
 libxdo.xdo_get_active_window.restype = c_int
@@ -1031,7 +1040,7 @@ Uses _NET_ACTIVE_WINDOW from the EWMH spec.
 :param window_ret: Pointer to Window where the active window is stored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_select_window_with_click(const xdo_t *xdo, Window *window_ret);
 libxdo.xdo_select_window_with_click.argtypes = (
     POINTER(xdo_t), POINTER(window_t))
@@ -1044,7 +1053,7 @@ is made.
 :param window_ret: Pointer to Window where the selected window is stored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_number_of_desktops(const xdo_t *xdo, long ndesktops);
 libxdo.xdo_set_number_of_desktops.argtypes = (POINTER(xdo_t), c_long)
 libxdo.xdo_set_number_of_desktops.restype = c_int
@@ -1056,7 +1065,7 @@ Uses _NET_NUMBER_OF_DESKTOPS of the EWMH spec.
 :param ndesktops: the new number of desktops to set.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_number_of_desktops(const xdo_t *xdo, long *ndesktops);
 libxdo.xdo_get_number_of_desktops.argtypes = (POINTER(xdo_t), POINTER(c_long))
 libxdo.xdo_get_number_of_desktops.restype = c_int
@@ -1069,7 +1078,7 @@ Uses _NET_NUMBER_OF_DESKTOPS of the EWMH spec.
     pointer to long where the current number of desktops is stored
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_current_desktop(const xdo_t *xdo, long desktop);
 libxdo.xdo_set_current_desktop.argtypes = (POINTER(xdo_t), c_long)
 libxdo.xdo_set_current_desktop.restype = c_int
@@ -1081,7 +1090,7 @@ Uses _NET_CURRENT_DESKTOP of the EWMH spec.
 :param desktop: The desktop number to switch to.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_current_desktop(const xdo_t *xdo, long *desktop);
 libxdo.xdo_get_current_desktop.argtypes = (POINTER(xdo_t), POINTER(c_long))
 libxdo.xdo_get_current_desktop.restype = c_int
@@ -1093,7 +1102,7 @@ Uses _NET_CURRENT_DESKTOP of the EWMH spec.
 :param desktop: pointer to long where the current desktop number is stored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_desktop_for_window(const xdo_t *xdo, Window wid, long desktop);
 libxdo.xdo_set_desktop_for_window.argtypes = (POINTER(xdo_t), window_t, c_long)
 libxdo.xdo_set_desktop_for_window.restype = c_int
@@ -1106,7 +1115,7 @@ Uses _NET_WM_DESKTOP of the EWMH spec.
 :param desktop: the desktop destination for the window
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_desktop_for_window(const xdo_t *xdo, Window wid, long *desktop);
 libxdo.xdo_get_desktop_for_window.argtypes = (
     POINTER(xdo_t), window_t, POINTER(c_long))
@@ -1123,7 +1132,7 @@ unmodified.
 :param desktop: pointer to long where the desktop of the window is stored
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_search_windows(const xdo_t *xdo, const xdo_search_t *search,
 #                       Window **windowlist_ret, unsigned int *nwindows_ret);
 libxdo.xdo_search_windows.argtypes = (
@@ -1140,7 +1149,7 @@ Search for windows.
 :see: xdo_search_t
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # unsigned char *xdo_get_window_property_by_atom(
 #     const xdo_t *xdo, Window window, Atom atom,
 #     long *nitems, Atom *type, int *size);
@@ -1163,7 +1172,7 @@ Generic property fetch.
     will need to be cast to the type before using.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_window_property(
 #     const xdo_t *xdo, Window window, const char *property,
 #     unsigned char **value, long *nitems, Atom *type, int *size);
@@ -1185,7 +1194,7 @@ Get property of window by name of atom.
 """
 
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # unsigned int xdo_get_input_state(const xdo_t *xdo);
 # todo: we need to define constants for the mask!
 libxdo.xdo_get_input_state.argtypes = (POINTER(xdo_t),)
@@ -1198,7 +1207,7 @@ Mod4Mask, or Mod5Mask.
 :return: the input mask
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # const char **xdo_get_symbol_map(void);
 libxdo.xdo_get_symbol_map.argtypes = ()
 libxdo.xdo_get_symbol_map.restype = POINTER(c_char_p)
@@ -1211,7 +1220,7 @@ strings, such as "alt" to "Alt_L"
 :return: array of strings.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_active_modifiers(const xdo_t *xdo, charcodemap_t **keys,
 #                              int *nkeys);
 libxdo.xdo_get_active_modifiers.argtypes = (
@@ -1226,7 +1235,7 @@ Get a list of active keys. Uses XQueryKeymap.
 :param nkeys: Pointer to integer where the number of keys will be stored.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_clear_active_modifiers(const xdo_t *xdo, Window window,
 #                                charcodemap_t *active_mods,
 #                                int active_mods_n);
@@ -1240,7 +1249,7 @@ For example, if you are holding 'alt' when xdo_get_active_modifiers is
 called, then this method will send a key-up for 'alt'
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_active_modifiers(const xdo_t *xdo, Window window,
 #                              charcodemap_t *active_mods,
 #                              int active_mods_n);
@@ -1254,7 +1263,7 @@ This is useful if you just cleared the active modifiers and then wish
 to restore them after.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_desktop_viewport(const xdo_t *xdo, int *x_ret, int *y_ret);
 libxdo.xdo_get_desktop_viewport.argtypes = (
     POINTER(xdo_t), POINTER(c_int), POINTER(c_int))
@@ -1267,7 +1276,7 @@ This is only relevant if your window manager supports
 ``_NET_DESKTOP_VIEWPORT``
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_set_desktop_viewport(const xdo_t *xdo, int x, int y);
 libxdo.xdo_set_desktop_viewport.argtypes = (
     POINTER(xdo_t), c_int, c_int)
@@ -1280,7 +1289,7 @@ This is only relevant if your window manager supports
 ``_NET_DESKTOP_VIEWPORT``
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_kill_window(const xdo_t *xdo, Window window);
 libxdo.xdo_kill_window.argtypes = (
     POINTER(xdo_t), window_t)
@@ -1290,7 +1299,7 @@ libxdo.xdo_kill_window.__doc__ = """\
 Kill a window and the client owning it.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # Constants for xdo_find_window_client()
 
 # Find a client window that is a parent of the window given
@@ -1299,7 +1308,7 @@ XDO_FIND_PARENTS = 0
 # Find a client window that is a child of the window given
 XDO_FIND_CHILDREN = 1
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_find_window_client(const xdo_t *xdo, Window window,
 #     Window *window_ret, int direction);
 libxdo.xdo_find_window_client.argtypes = (
@@ -1311,7 +1320,7 @@ Find a client window (child) in a given window. Useful if you get the
 window manager's decorator window rather than the client window.
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_window_name(const xdo_t *xdo, Window window,
 #                         unsigned char **name_ret, int *name_len_ret,
 #                         int *name_type);
@@ -1326,7 +1335,7 @@ Get a window's name, if any.
 TODO(sissel): Document
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # void xdo_disable_feature(xdo_t *xdo, int feature);
 libxdo.xdo_disable_feature.argtypes = (POINTER(xdo_t), c_int)
 libxdo.xdo_disable_feature.restype = None
@@ -1339,7 +1348,7 @@ in your own applications.
 :see: XDO_FEATURES
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # void xdo_enable_feature(xdo_t *xdo, int feature);
 libxdo.xdo_enable_feature.argtypes = (POINTER(xdo_t), c_int)
 libxdo.xdo_enable_feature.restype = None
@@ -1352,7 +1361,7 @@ in your own applications.
 :see: XDO_FEATURES
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_has_feature(xdo_t *xdo, int feature);
 libxdo.xdo_has_feature.argtypes = (POINTER(xdo_t), c_int)
 libxdo.xdo_has_feature.restype = c_int
@@ -1366,7 +1375,7 @@ in your own applications.
 :see: XDO_FEATURES
 """
 
-# ----------------------------------------------------------------------
+# ============================================================================
 # int xdo_get_viewport_dimensions(xdo_t *xdo, unsigned int *width,
 #                                 unsigned int *height, int screen);
 libxdo.xdo_get_viewport_dimensions.argtypes = (
