@@ -46,3 +46,25 @@ The library is currently tested on:
 | ------ | ------------ | -------------- | ------------- |
 | Debian GNU/Linux "jessie" (testing) | amd64 | 3.20130111.1-3.1 | success |
 
+
+## Installation
+
+The package is available on pypy https://pypi.python.org/pypi/python-libxdo/
+
+Install via pip:
+
+```
+pip install python-libxdo==0.1a
+```
+
+Install the tarball directly from github:
+
+```
+pip install https://github.com/rshk/python-libxdo/tarball/master
+```
+
+Install in development mode from git:
+
+```
+pip install -e 'git+https://github.com/rshk/python-libxdo.git#egg=python-libxdo'
+```
