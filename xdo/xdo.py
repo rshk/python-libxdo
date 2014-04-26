@@ -174,16 +174,16 @@ class xdo_search_t(Structure):
 
     _fields_ = [
         # const char *title; pattern to test against a window title
-        ('title', c_char),
+        ('title', c_char_p),
 
         # const char *winclass; pattern to test against a window class
-        ('winclass', c_char),
+        ('winclass', c_char_p),
 
         # const char *winclassname; pattern to test against a window class
-        ('winclassname', c_char),
+        ('winclassname', c_char_p),
 
         # const char *winname; pattern to test against a window name
-        ('winname', c_char),
+        ('winname', c_char_p),
 
         # int pid; window pid (From window atom _NET_WM_PID)
         ('pid', c_int),
@@ -369,8 +369,8 @@ Get the window the mouse is currently over
 # int xdo_get_mouse_location2(const xdo_t *xdo, int *x_ret, int *y_ret,
 #                             int *screen_num_ret, Window *window_ret);
 libxdo.xdo_get_mouse_location2.argtypes = (
-    POINTER(xdo_t), POINTER(int), POINTER(int),
-    POINTER(int), POINTER(window_t))
+    POINTER(xdo_t), POINTER(c_int), POINTER(c_int),
+    POINTER(c_int), POINTER(window_t))
 libxdo.xdo_get_mouse_location2.restype = c_int
 libxdo.xdo_get_mouse_location2.errcheck = _errcheck
 libxdo.xdo_get_mouse_location2.__doc__ = """\
@@ -538,19 +538,20 @@ Send a series of keystrokes.
 """
 
 # ----------------------------------------------------------------------
-# int xdo_get_active_keys_to_keycode_list(
-#     const xdo_t *xdo, charcodemap_t **keys, int *nkeys);
-libxdo.xdo_get_active_keys_to_keycode_list.argtypes = (
-    POINTER(xdo_t), POINTER(POINTER(charcodemap_t)), POINTER(c_int))
-libxdo.xdo_get_active_keys_to_keycode_list.restype = c_int
-libxdo.xdo_get_active_keys_to_keycode_list.errcheck = _errcheck
-libxdo.xdo_get_active_keys_to_keycode_list.__doc__ = """\
-Get a list of active keys. Uses XQueryKeymap.
+# todo: this function seems to be missing -> double-check
+# # int xdo_get_active_keys_to_keycode_list(
+# #     const xdo_t *xdo, charcodemap_t **keys, int *nkeys);
+# libxdo.xdo_get_active_keys_to_keycode_list.argtypes = (
+#     POINTER(xdo_t), POINTER(POINTER(charcodemap_t)), POINTER(c_int))
+# libxdo.xdo_get_active_keys_to_keycode_list.restype = c_int
+# libxdo.xdo_get_active_keys_to_keycode_list.errcheck = _errcheck
+# libxdo.xdo_get_active_keys_to_keycode_list.__doc__ = """\
+# Get a list of active keys. Uses XQueryKeymap.
 
-:param keys: Pointer to the array of charcodemap_t that will be allocated
-   by this function.
-:param nkeys: Pointer to integer where the number of keys will be stored.
-"""
+# :param keys: Pointer to the array of charcodemap_t that will be allocated
+#    by this function.
+# :param nkeys: Pointer to integer where the number of keys will be stored.
+# """
 
 # ----------------------------------------------------------------------
 # int xdo_wait_for_window_map_state(const xdo_t *xdo, Window wid,
@@ -760,7 +761,6 @@ Wait for a window to have or lose focus.
 # int xdo_get_pid_window(const xdo_t *xdo, Window window);
 libxdo.xdo_get_pid_window.argtypes = (POINTER(xdo_t), window_t)
 libxdo.xdo_get_pid_window.restype = c_int
-libxdo.xdo_get_pid_window.errcheck = _errcheck
 libxdo.xdo_get_pid_window.__doc__ = """\
 Get the PID owning a window. Not all applications support this.
 It looks at the _NET_WM_PID property of the window.
@@ -1215,7 +1215,7 @@ TODO(sissel): Document
 # void xdo_disable_feature(xdo_t *xdo, int feature);
 libxdo.xdo_disable_feature.argtypes = (POINTER(xdo_t), c_int)
 libxdo.xdo_disable_feature.restype = None
-libxdo.xdo_disable_feature.argtypes.__doc__ = """\
+libxdo.xdo_disable_feature.__doc__ = """\
 Disable an xdo feature.
 
 This function is mainly used by libxdo itself, however, you may find it useful

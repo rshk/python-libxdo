@@ -1,12 +1,31 @@
 import os
 import ctypes
+from ctypes import POINTER
 from collections import namedtuple
 
 from .xdo import libxdo as _libxdo
+from .xdo import charcodemap_t, window_t, screen_t, xdo_search_t
+
+# We simply import constants from the "wrapper" module
+# in the package namespace
+from .xdo import (SEARCH_TITLE, SEARCH_CLASS, SEARCH_NAME, SEARCH_PID,  # noqa
+                  SEARCH_ONLYVISIBLE, SEARCH_SCREEN, SEARCH_CLASSNAME,
+                  SEARCH_DESKTOP)
+from .xdo import XdoException  # noqa
 
 
 mouse_location = namedtuple('mouse_location', 'x,y,screen_num')
 mouse_location2 = namedtuple('mouse_location2', 'x,y,screen_num,window')
+window_location = namedtuple('window_location', 'x,y,screen')
+window_size = namedtuple('window_size', 'width,height')
+
+
+# Mouse button constants
+MOUSE_LEFT = 1
+MOUSE_MIDDLE = 2
+MOUSE_RIGHT = 3
+MOUSE_WHEEL_UP = 4
+MOUSE_WHEEL_DOWN = 5
 
 
 class Xdo(object):
@@ -246,11 +265,414 @@ class Xdo(object):
         _libxdo.xdo_send_keysequence_window_list_do(
             self._xdo, window, keys, len(keys), pressed, modifier, delay)
 
+    def get_active_keys_to_keycode_list(self):
+        """Get a list of active keys. Uses XQueryKeymap"""
+        keys = POINTER(charcodemap_t)
+        nkeys = ctypes.c_int(0)
+        _libxdo.xdo_get_active_keys_to_keycode_list(
+            self._xdo, ctypes.byref(keys), ctypes.byref(nkeys))
+
+        # todo: make sure this returns a list of charcodemap_t!
+        return keys.value
+
+    def wait_for_window_map_state(self, window, state):
+        """
+        Wait for a window to have a specific map state.
+
+        State possibilities:
+          IsUnmapped - window is not displayed.
+          IsViewable - window is mapped and shown (though may be
+              clipped by windows on top of it)
+          IsUnviewable - window is mapped but a parent window is unmapped.
+
+        :param window: the window you want to wait for.
+        :param state: the state to wait for.
+        """
+        _libxdo.xdo_wait_for_window_map_state(self._xdo, window, state)
+
+    def wait_for_window_size(self, window, width, height, flags, to_or_from):
+        _libxdo.xdo_wait_for_window_size(self._xdo)
+
+    def wait_for_window_size_to(self, window, width, height, flags=0):
+        return self.wait_for_window_size(window, width, height, flags, 0)
+
+    def wait_for_window_size_from(self, window, width, height, flags=0):
+        return self.wait_for_window_size(window, width, height, flags, 1)
+
+    def move_window(self, window, x, y):
+        """
+        Move a window to a specific location.
+
+        The top left corner of the window will be moved to the x,y coordinate.
+
+        :param wid: the window to move
+        :param x: the X coordinate to move to.
+        :param y: the Y coordinate to move to.
+        """
+        _libxdo.xdo_move_window(self._xdo, window, x, y)
+
+    def translate_window_with_sizehint(self, window, width, height):
+        """
+        Apply a window's sizing hints (if any) to a given width and height.
+
+        This function wraps XGetWMNormalHints() and applies any
+        resize increment and base size to your given width and height values.
+
+        :param window: the window to use
+        :param width: the unit width you want to translate
+        :param height: the unit height you want to translate
+        :return: (width, height)
+        """
+        width_ret = ctypes.c_uint(0)
+        height_ret = ctypes.c_uint(0)
+        _libxdo.xdo_translate_window_with_sizehint(
+            self._xdo, window, width, height,
+            ctypes.byref(width_ret),
+            ctypes.byref(height_ret))
+        return width_ret.value, height_ret.value
+
+    def set_window_size(self, window, w, h, flags=0):
+        """
+        Change the window size.
+
+        :param wid: the window to resize
+        :param w: the new desired width
+        :param h: the new desired height
+        :param flags: if 0, use pixels for units. If SIZE_USEHINTS, then
+            the units will be relative to the window size hints.
+        """
+        _libxdo.xdo_set_window_size(self._xdo, window, w, h, flags)
+
+    def set_window_property(self, window, name, value):
+        """
+        Change a window property.
+
+        Example properties you can change are WM_NAME, WM_ICON_NAME, etc.
+
+        :param wid: The window to change a property of.
+        :param name: the string name of the property.
+        :param value: the string value of the property.
+        """
+        _libxdo.xdo_set_window_property(self._xdo, window, name, value)
+
+    def set_window_class(self, window, name, class_):
+        """
+        Change the window's classname and or class.
+
+        :param name: The new class name. If ``None``, no change.
+        :param class_: The new class. If ``None``, no change.
+        """
+        _libxdo.xdo_set_window_class(self._xdo, window, name, class_)
+
+    def set_window_urgency(self, window, urgency):
+        """Sets the urgency hint for a window"""
+        _libxdo.xdo_set_window_urgency(self._xdo, window, urgency)
+
+    def set_window_override_redirect(self, window, override_redirect):
+        """
+        Set the override_redirect value for a window. This generally means
+        whether or not a window manager will manage this window.
+
+        If you set it to 1, the window manager will usually not draw
+        borders on the window, etc. If you set it to 0, the window manager
+         will see it like a normal application window.
+        """
+        _libxdo.xdo_set_window_override_redirect(
+            self._xdo, window, override_redirect)
+
+    def focus_window(self, window):
+        """
+        Focus a window.
+
+        :see: xdo_activate_window
+        :param wid: the window to focus.
+        """
+        _libxdo.xdo_focus_window(self._xdo, window)
+
+    def raise_window(self, window):
+        """
+        Raise a window to the top of the window stack. This is also sometimes
+        termed as bringing the window forward.
+
+        :param wid: The window to raise.
+        """
+        _libxdo.xdo_raise_window(self._xdo, window)
+
+    def get_focused_window(self):
+        """
+        Get the window currently having focus.
+
+        :param window_ret:
+        Pointer to a window where the currently-focused window
+        will be stored.
+        """
+        window_ret = window_t(0)
+        _libxdo.xdo_get_focused_window(self._xdo, ctypes.byref(window_ret))
+        return window_ret.value
+
+    def wait_for_window_focus(self, window, want_focus):
+        """
+        Wait for a window to have or lose focus.
+
+        :param window: The window to wait on
+        :param want_focus: If 1, wait for focus. If 0, wait for loss of focus.
+        """
+        _libxdo.xdo_wait_for_window_focus(self._xdo, window, want_focus)
+
+    def get_pid_window(self, window):
+        """
+        Get the PID owning a window. Not all applications support this.
+        It looks at the ``_NET_WM_PID`` property of the window.
+
+        :param window: the window to query.
+        :return: the process id or 0 if no pid found.
+        """
+        # todo: if the pid is 0, it means "not found" -> exception?
+        return _libxdo.xdo_get_pid_window(self._xdo, window)
+
+    def get_focused_window_sane(self):
+        """
+        Like xdo_get_focused_window, but return the first ancestor-or-self
+        window * having a property of WM_CLASS. This allows you to get
+        the "real" or top-level-ish window having focus rather than something
+        you may not expect to be the window having focused.
+
+        :param window_ret:
+            Pointer to a window where the currently-focused window
+            will be stored.
+        """
+        window_ret = window_t(0)
+        _libxdo.xdo_get_focused_window_sane(
+            self._xdo, ctypes.byref(window_ret))
+        return window_ret.value
+
+    def activate_window(self, window):
+        """
+        Activate a window. This is generally a better choice than
+        xdo_focus_window for a variety of reasons, but it requires window
+        manager support:
+
+        - If the window is on another desktop, that desktop is switched to.
+        - It moves the window forward rather than simply focusing it
+
+        Requires your window manager to support this.
+        Uses _NET_ACTIVE_WINDOW from the EWMH spec.
+
+        :param wid: the window to activate
+        """
+        _libxdo.xdo_activate_window(self._xdo, window)
+
+    def wait_for_window_active(self, window, active=1):
+        """
+        Wait for a window to be active or not active.
+
+        Requires your window manager to support this.
+        Uses _NET_ACTIVE_WINDOW from the EWMH spec.
+
+        :param window: the window to wait on
+        :param active: If 1, wait for active. If 0, wait for inactive.
+        """
+        _libxdo.xdo_wait_for_window_active(self._xdo, window, active)
+
+    def map_window(self, window):
+        """
+        Map a window. This mostly means to make the window visible if it is
+        not currently mapped.
+
+        :param wid: the window to map.
+        """
+        _libxdo.xdo_map_window(self._xdo, window)
+
+    def unmap_window(self, window):
+        """
+        Unmap a window
+
+        :param wid: the window to unmap
+        """
+        _libxdo.xdo_unmap_window(self._xdo, window)
+
+    def minimize_window(self, window):
+        """Minimize a window"""
+        _libxdo.xdo_minimize_window(self._xdo, window)
+
+    def reparent_window(self, window_source, window_target):
+        """
+        Reparents a window
+
+        :param wid_source: the window to reparent
+        :param wid_target: the new parent window
+        """
+        _libxdo.xdo_reparent_window(self._xdo, window_source, window_target)
+
+    def get_window_location(self, window):
+        """
+        Get a window's location.
+        """
+        screen_ret = POINTER(screen_t)
+        x_ret = ctypes.c_int(0)
+        y_ret = ctypes.c_int(0)
+        _libxdo.xdo_get_window_location(
+            self._xdo, window, ctypes.byref(x_ret), ctypes.byref(y_ret),
+            ctypes.byref(screen_ret))
+        return window_location(x_ret.value, y_ret.value, screen_ret.value)
+
+    def get_window_size(self, window):
+        """
+        Get a window's size.
+        """
+        w_ret = ctypes.c_int(0)
+        h_ret = ctypes.c_int(0)
+        _libxdo.xdo_get_window_size(self._xdo, window, ctypes.byref(w_ret),
+                                    ctypes.byref(h_ret))
+        return window_size(w_ret.value, h_ret.value)
+
+    def get_active_window(self):
+        """
+        Get the currently-active window.
+        Requires your window manager to support this.
+        Uses ``_NET_ACTIVE_WINDOW`` from the EWMH spec.
+        """
+        window_ret = window_t(0)
+        _libxdo.xdo_get_active_window(self._xdo, ctypes.byref(window_ret))
+        return window_ret.value
+
     def select_window_with_click(self):
-        window_ret = ctypes.c_ulong(0)
+        """
+        Get a window ID by clicking on it.
+        This function blocks until a selection is made.
+        """
+        window_ret = window_t(0)
         _libxdo.xdo_select_window_with_click(
             self._xdo, ctypes.byref(window_ret))
         return window_ret.value
+
+    def set_number_of_desktops(self, ndesktops):
+        """
+        Set the number of desktops.
+        Uses ``_NET_NUMBER_OF_DESKTOPS`` of the EWMH spec.
+
+        :param ndesktops: the new number of desktops to set.
+        """
+        _libxdo.xdo_set_number_of_desktops(self._xdo, ndesktops)
+
+    def get_number_of_desktops(self):
+        """
+        Get the current number of desktops.
+        Uses ``_NET_NUMBER_OF_DESKTOPS`` of the EWMH spec.
+
+        :param ndesktops:
+            pointer to long where the current number of desktops is stored
+        """
+        ndesktops = ctypes.c_long(0)
+        _libxdo.xdo_get_number_of_desktops(self._xdo, ctypes.byref(ndesktops))
+        return ndesktops.value
+
+    def set_current_desktop(self, desktop):
+        """
+        Switch to another desktop.
+        Uses ``_NET_CURRENT_DESKTOP`` of the EWMH spec.
+
+        :param desktop: The desktop number to switch to.
+        """
+        _libxdo.xdo_set_current_desktop(self._xdo, desktop)
+
+    def get_current_desktop(self):
+        """
+        Get the current desktop.
+        Uses ``_NET_CURRENT_DESKTOP`` of the EWMH spec.
+        """
+        desktop = ctypes.c_long(0)
+        _libxdo.xdo_get_current_desktop(self._xdo, ctypes.byref(desktop))
+        return desktop.value
+
+    def set_desktop_for_window(self, window, desktop):
+        """
+        Move a window to another desktop
+        Uses _NET_WM_DESKTOP of the EWMH spec.
+
+        :param wid: the window to move
+        :param desktop: the desktop destination for the window
+        """
+        _libxdo.xdo_set_desktop_for_window(self._xdo, window, desktop)
+
+    def get_desktop_for_window(self, window):
+        """
+        Get the desktop a window is on.
+        Uses _NET_WM_DESKTOP of the EWMH spec.
+
+        If your desktop does not support ``_NET_WM_DESKTOP``, then '*desktop'
+        remains unmodified.
+
+        :param wid: the window to query
+        """
+        desktop = ctypes.c_long(0)
+        _libxdo.xdo_get_desktop_for_window(
+            self._xdo, window, ctypes.byref(desktop))
+        return desktop.value
+
+    def search_windows(
+            self, winname=None, winclass=None, winclassname=None,
+            pid=None, only_visible=False, screen=None, require=False,
+            searchmask=0, desktop=None, limit=0, max_depth=-1):
+        """
+        Search for windows.
+
+        :param winname:
+            Regexp to be matched against window name
+        :param winclass:
+            Regexp to be matched against window class
+        :param winclassname:
+            Regexp to be matched against window class name
+        :param pid:
+            Only return windows from this PID
+        :param only_visible:
+            If True, only return visible windows
+
+        :return:
+            A list of window ids
+        """
+        windowlist_ret = ctypes.pointer(window_t(0))
+        nwindows_ret = ctypes.c_uint(0)
+
+        search = xdo_search_t(searchmask=searchmask)
+
+        if winname is not None:
+            search.winname = winname
+            search.searchmask |= SEARCH_NAME
+
+        if winclass is not None:
+            search.winclass = winclass
+            search.searchmask |= SEARCH_CLASS
+
+        if winclassname is not None:
+            search.winclassname = winclassname
+            search.searchmask |= SEARCH_CLASSNAME
+
+        if pid is not None:
+            search.pid = pid
+            search.searchmask |= SEARCH_PID
+
+        if only_visible:
+            search.only_visible = True
+            search.searchmask |= SEARCH_ONLYVISIBLE
+
+        if screen is not None:
+            search.screen = screen
+            search.searchmask |= SEARCH_SCREEN
+
+        if screen is not None:
+            search.screen = desktop
+            search.searchmask |= SEARCH_DESKTOP
+
+        search.limit = limit
+        search.max_depth = max_depth
+
+        _libxdo.xdo_search_windows(
+            self._xdo, search,
+            ctypes.byref(windowlist_ret),
+            ctypes.byref(nwindows_ret))
+
+        return [windowlist_ret[i] for i in xrange(nwindows_ret.value)]
 
     def __del__(self):
         _libxdo.xdo_free(self._xdo)
