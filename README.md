@@ -40,8 +40,6 @@ xdo.enter_text_window(win_id, 'Python rocks!')
 
 The library is currently tested on:
 
-+----+--------------+----------------+---------------+
 | OS | Architecture | libxdo version | Test result   |
-+----+--------------+----------------+---------------+
-| Debian GNU/Linux "jessie" (testing) | amd64 | 3.20130111.1-3.1 | successful |
-+----+--------------+----------------+---------------+
+| -- | -------------| -------------- | ------------- |
+| Debian GNU/Linux "jessie" (testing) | amd64 | 3.20130111.1-3.1 | success |
