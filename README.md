@@ -18,6 +18,13 @@ Documentation is hosted on Read The Docs:
 
 http://python-libxdo.readthedocs.org/
 
+**Note:** there currently is a problem building the documentation
+on RTD due to missing libxdo library (which makes importing ``xdo.xdo`` fail).
+For this reason, a (locally-generated) copy of the documentation is hosted
+on github pages:
+
+https://rshk.github.io/python-libxdo
+
 
 ## Example usage
 
