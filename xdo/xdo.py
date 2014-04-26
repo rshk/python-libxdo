@@ -4,7 +4,7 @@ Ctypes bindings for libxdo
 
 import ctypes
 from ctypes import (Structure, POINTER, c_int, c_char, c_char_p, c_wchar,
-                    c_void_p, c_long, c_uint, c_ulong)
+                    c_void_p, c_long, c_uint, c_ulong, c_bool)
 
 libxdo = ctypes.CDLL("libxdo.so.3")
 
@@ -57,26 +57,30 @@ SIZE_USEHINTS_Y = 1 << 2
 CURRENTWINDOW = 0
 
 
-# /**
-#  * @internal
-#  * Map character to whatever information we need to be able to send
-#  * this key (keycode, modifiers, group, etc)
-#  */
-# typedef struct charcodemap {
 class charcodemap_t(Structure):
+    """
+    Map character to whatever information we need to be able to send
+    this key (keycode, modifiers, group, etc)
+    """
+
     _fields_ = [
-        #   wchar_t key; /** the letter for this key, like 'a' */
+        # wchar_t key; /** the letter for this key, like 'a' */
         ('key', c_wchar),
+
         #   KeyCode code; /** the keycode that this key is on */
         ('code', c_char),  # 1 byte struct
+
         #   KeySym symbol; /** the symbol representing this key */
         ('code', c_char * 8),  # 8 bytes struct
+
         #   int group; /** the keyboard group that has this key in it */
         ('group', c_int),
+
         #   int modmask; /** the modifiers to apply when sending this key */
         #    /** if this key need to be bound at runtime because it does not
         #     * exist in the current keymap, this will be set to 1. */
         ('modmask', c_int),
+
         #   int needs_binding;
         ('needs_binding', c_int),
     ]
@@ -88,11 +92,9 @@ class charcodemap_t(Structure):
 XDO_FEATURE_XTEST = 0
 
 
-# /**
-#  * The main context.
-#  */
-# typedef struct xdo {
 class xdo_t(Structure):
+    """The main context"""
+
     _fields_ = [
         # The Display for Xlib
         # Display *xdpy;
@@ -110,12 +112,12 @@ class xdo_t(Structure):
         #   int charcodes_len;
         ('charcodes_len', c_int),
 
-        # @internal highest keycode value
-        #   int keycode_high; /* highest and lowest keycodes
+        # @internal highest keycode value highest and lowest keycodes
+        #   int keycode_high;
         ('keycode_high', c_int),
 
-        # @internal lowest keycode value
-        #   int keycode_low; /* used by this X server
+        # @internal lowest keycode value used by this X server
+        #   int keycode_low;
         ('keycode_low', c_int),
 
         # @internal number of keysyms per keycode
@@ -163,6 +165,9 @@ SEARCH_CLASSNAME = 1 << 6
 
 # Search a specific desktop
 SEARCH_DESKTOP = 1 << 7
+
+
+SEARCH_ANY, SEARCH_ALL = xrange(2)
 
 
 class xdo_search_t(Structure):
@@ -225,8 +230,118 @@ XDO_SUCCESS = 0
 # Window type is just defined as ``unsigned long``
 window_t = c_ulong
 useconds_t = c_ulong
-screen_t = c_ulong  # warning! this is simply guessed!
-atom_t = c_ulong  # warning! this is guessed too!! (check X11 lib)
+# screen_t = c_ulong  # warning! this is simply guessed!
+
+XID = c_ulong
+Colormap = XID
+GContext = XID
+Pixmap = XID
+Font = XID
+
+
+# Defined in X11/Xlib.h
+class XGCValues(Structure):
+    _fields_ = [
+        ('function', c_int),  # logical operation
+        ('plane_mask', c_ulong),  # plane mask
+        ('foreground', c_ulong),  # foreground pixel
+        ('background', c_ulong),  # background pixel
+        ('line_width', c_int),  # line width
+        ('line_style', c_int),  # LineSolid, LineOnOffDash, LineDoubleDash
+        ('cap_style', c_int),  # CapNotLast, CapButt, CapRound, CapProjecting
+        ('join_style', c_int),  # JoinMiter, JoinRound, JoinBevel
+        ('fill_style', c_int),  # FillSolid, FillTiled, FillStippled, FillOpaeueStippled  # noqa
+        ('fill_rule', c_int),  # EvenOddRule, WindingRule
+        ('arc_mode', c_int),  # ArcChord, ArcPieSlice
+        ('tile', Pixmap),  # tile pixmap for tiling operations
+        ('stipple', Pixmap),  # stipple 1 plane pixmap for stipping
+        ('ts_x_origin', c_int),  # offset for tile or stipple operations
+        ('ts_y_origin', c_int),
+        ('font', Font),  # default text font for text operations
+        ('subwindow_mode', c_int),  # ClipByChildren, IncludeInferiors
+        ('graphics_exposures', c_bool),  # boolean, should exposures be generated # noqa
+        ('clip_x_origin', c_int),  # origin for clipping
+        ('clip_y_origin', c_int),
+        ('clip_mask', Pixmap),  # bitmap clipping; other calls for rects */
+        ('dash_offset', c_int),  # patterned/dashed line information
+        ('dashes', c_char),
+    ]
+
+
+# Defined in X11/Xlibint.h as _XGC -> then typedef'd as "GC"
+class _XGC(Structure):
+    _fields_ = [
+        ('ext_data', c_void_p),  # (XExtData *) hook for extension to hang data
+        ('gid', GContext),  # protocol ID for graphics context
+        ('reacts', c_bool),  # boolean: TRUE if clipmask is list of rectangles
+        ('dashes', c_bool),  # boolean: TRUE if dash-list is really a list
+        ('dirty', c_ulong),  # cache dirty bits
+        ('values', XGCValues),  # shadow structure of values
+    ]
+
+
+# Screen is defined in X11/Xlib.h
+class Screen(Structure):
+    _fields_ = [
+        #	XExtData *ext_data;	/* hook for extension to hang data */
+        ('ext_data', c_void_p),
+
+        #	struct _XDisplay *display;/* back pointer to display structure */
+        ('display', c_void_p),
+
+        #	Window root;		/* Root window id. */
+        ('root', window_t),
+
+        #	int width, height;	/* width and height of screen */
+        ('width', c_int),
+        ('height', c_int),
+
+        #	int mwidth, mheight;	/* width and height of  in millimeters */
+        ('mwidth', c_int),
+        ('mheight', c_int),
+
+        #	int ndepths;		/* number of depths possible */
+        ('ndepths', c_int),
+
+        #	Depth *depths;		/* list of allowable depths on the screen */
+        ('depths', c_void_p),
+
+        #	int root_depth;		/* bits per pixel */
+        ('root_depth', c_int),
+
+        #	Visual *root_visual;	/* root visual */
+        ('root_visual', c_void_p),
+
+        #	GC default_gc;		/* GC for the root root visual */
+        ('default_gc', _XGC),
+
+        #	Colormap cmap;		/* default color map */
+        ('cmap', Colormap),
+
+        #	unsigned long white_pixel;
+        ('white_pixel', c_ulong),
+
+        #	unsigned long black_pixel;	/* White and Black pixel values */
+        ('black_pixel', c_ulong),
+
+        #	int max_maps, min_maps;	/* max and min color maps */
+        ('max_maps', c_int),
+        ('min_maps', c_int),
+
+        #	int backing_store;	/* Never, WhenMapped, Always */
+        ('backing_store', c_int),
+
+        #	Bool save_unders;
+        ('save_unders', c_bool),
+
+        #	long root_input_mask;	/* initial root input mask */
+        ('root_input_mask', c_long),
+    ]
+
+
+# From X11/Xdefs.h
+# typedef unsigned long Atom;
+atom_t = c_ulong
 
 # ----------------------------------------------------------------------
 # xdo_t* xdo_new(const char *display);
@@ -869,7 +984,7 @@ Reparents a window
 #                             int *x_ret, int *y_ret, Screen **screen_ret);
 libxdo.xdo_get_window_location.argtypes = (
     POINTER(xdo_t), window_t, POINTER(c_int), POINTER(c_int),
-    POINTER(POINTER(screen_t)))
+    POINTER(POINTER(Screen)))
 libxdo.xdo_get_window_location.restype = c_int
 libxdo.xdo_get_window_location.errcheck = _errcheck
 libxdo.xdo_get_window_location.__doc__ = """\

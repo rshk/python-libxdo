@@ -27,6 +27,16 @@ MOUSE_RIGHT = 3
 MOUSE_WHEEL_UP = 4
 MOUSE_WHEEL_DOWN = 5
 
+# Keyboard modifiers
+MOD_Shift = 1 << 0
+MOD_Lock = 1 << 1
+MOD_Control = 1 << 2
+MOD_Mod1 = 1 << 3
+MOD_Mod2 = 1 << 4
+MOD_Mod3 = 1 << 5
+MOD_Mod4 = 1 << 6
+MOD_Mod5 = 1 << 7
+
 
 class Xdo(object):
     def __init__(self, display=None):
