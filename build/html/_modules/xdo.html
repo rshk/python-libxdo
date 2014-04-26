@@ -1,0 +1,1036 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>xdo &mdash; python-libxdo 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="python-libxdo 0.1a documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> python-libxdo</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../library.html">Library documentation</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">python-libxdo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>xdo</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for xdo</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="n">POINTER</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">from</span> <span class="nn">.xdo</span> <span class="kn">import</span> <span class="n">libxdo</span> <span class="k">as</span> <span class="n">_libxdo</span>
+<span class="kn">from</span> <span class="nn">.xdo</span> <span class="kn">import</span> <span class="n">charcodemap_t</span><span class="p">,</span> <span class="n">window_t</span><span class="p">,</span> <span class="n">Screen</span><span class="p">,</span> <span class="n">xdo_search_t</span><span class="p">,</span> <span class="n">Atom</span>
+
+<span class="c"># We simply import constants from the &quot;wrapper&quot; module</span>
+<span class="c"># in the package namespace</span>
+<span class="kn">from</span> <span class="nn">.xdo</span> <span class="kn">import</span> <span class="p">(</span><span class="n">SEARCH_TITLE</span><span class="p">,</span> <span class="n">SEARCH_CLASS</span><span class="p">,</span> <span class="n">SEARCH_NAME</span><span class="p">,</span> <span class="n">SEARCH_PID</span><span class="p">,</span>  <span class="c"># noqa</span>
+                  <span class="n">SEARCH_ONLYVISIBLE</span><span class="p">,</span> <span class="n">SEARCH_SCREEN</span><span class="p">,</span> <span class="n">SEARCH_CLASSNAME</span><span class="p">,</span>
+                  <span class="n">SEARCH_DESKTOP</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.xdo</span> <span class="kn">import</span> <span class="n">XdoException</span>  <span class="c"># noqa</span>
+
+
+<span class="n">mouse_location</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;mouse_location&#39;</span><span class="p">,</span> <span class="s">&#39;x,y,screen_num&#39;</span><span class="p">)</span>
+<span class="n">mouse_location2</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;mouse_location2&#39;</span><span class="p">,</span> <span class="s">&#39;x,y,screen_num,window&#39;</span><span class="p">)</span>
+<span class="n">window_location</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;window_location&#39;</span><span class="p">,</span> <span class="s">&#39;x,y,screen&#39;</span><span class="p">)</span>
+<span class="n">window_size</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;window_size&#39;</span><span class="p">,</span> <span class="s">&#39;width,height&#39;</span><span class="p">)</span>
+<span class="n">input_mask</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;input_mask&#39;</span><span class="p">,</span> <span class="s">&#39;shift,lock,control,mod1,mod2,mod3,mod4,mod5&#39;</span><span class="p">)</span>  <span class="c"># noqa</span>
+
+
+<span class="c"># Mouse button constants</span>
+<span class="n">MOUSE_LEFT</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">MOUSE_MIDDLE</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">MOUSE_RIGHT</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">MOUSE_WHEEL_UP</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">MOUSE_WHEEL_DOWN</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="c"># Keyboard modifiers</span>
+<span class="n">MOD_Shift</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
+<span class="n">MOD_Lock</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+<span class="n">MOD_Control</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
+<span class="n">MOD_Mod1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">3</span>
+<span class="n">MOD_Mod2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span>
+<span class="n">MOD_Mod3</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span>
+<span class="n">MOD_Mod4</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">6</span>
+<span class="n">MOD_Mod5</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">7</span>
+
+
+<span class="k">def</span> <span class="nf">_gen_input_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate input mask from bytemask&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">input_mask</span><span class="p">(</span>
+        <span class="n">shift</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">MOD_Shift</span><span class="p">),</span>
+        <span class="n">lock</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">MOD_Lock</span><span class="p">),</span>
+        <span class="n">control</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">MOD_Control</span><span class="p">),</span>
+        <span class="n">mod1</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">MOD_Mod1</span><span class="p">),</span>
+        <span class="n">mod2</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">MOD_Mod2</span><span class="p">),</span>
+        <span class="n">mod3</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">MOD_Mod3</span><span class="p">),</span>
+        <span class="n">mod4</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">MOD_Mod4</span><span class="p">),</span>
+        <span class="n">mod5</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">MOD_Mod5</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="Xdo"><a class="viewcode-back" href="../library.html#xdo.Xdo">[docs]</a><span class="k">class</span> <span class="nc">Xdo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">display</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">display</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;DISPLAY&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span> <span class="o">=</span> <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_new</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Xdo.version"><a class="viewcode-back" href="../library.html#xdo.Xdo.version">[docs]</a>    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_version</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Xdo.move_mouse"><a class="viewcode-back" href="../library.html#xdo.Xdo.move_mouse">[docs]</a>    <span class="k">def</span> <span class="nf">move_mouse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move the mouse to a specific location.</span>
+
+<span class="sd">        :param x: the target X coordinate on the screen in pixels.</span>
+<span class="sd">        :param y: the target Y coordinate on the screen in pixels.</span>
+<span class="sd">        :param screen: the screen (number) you want to move on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># todo: apparently the &quot;screen&quot; argument is not behaving properly</span>
+        <span class="c">#       and sometimes even making the interpreter crash..</span>
+        <span class="c">#       Figure out why (changed API / using wrong header?)</span>
+
+        <span class="c"># &gt;&gt;&gt; xdo.move_mouse(3000,200,1)</span>
+
+        <span class="c"># X Error of failed request:  BadWindow (invalid Window parameter)</span>
+        <span class="c">#   Major opcode of failed request:  41 (X_WarpPointer)</span>
+        <span class="c">#   Resource id in failed request:  0x2a4fca0</span>
+        <span class="c">#   Serial number of failed request:  25</span>
+        <span class="c">#   Current serial number in output stream:  26</span>
+
+        <span class="c"># Just to be safe..</span>
+        <span class="n">screen</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_move_mouse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">screen</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.move_mouse_relative_to_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.move_mouse_relative_to_window">[docs]</a>    <span class="k">def</span> <span class="nf">move_mouse_relative_to_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move the mouse to a specific location relative to the top-left corner</span>
+<span class="sd">        of a window.</span>
+
+<span class="sd">        :param x: the target X coordinate on the screen in pixels.</span>
+<span class="sd">        :param y: the target Y coordinate on the screen in pixels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_move_mouse_relative_to_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.move_mouse_relative"><a class="viewcode-back" href="../library.html#xdo.Xdo.move_mouse_relative">[docs]</a>    <span class="k">def</span> <span class="nf">move_mouse_relative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move the mouse relative to it&#39;s current position.</span>
+
+<span class="sd">        :param x: the distance in pixels to move on the X axis.</span>
+<span class="sd">        :param y: the distance in pixels to move on the Y axis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_move_mouse_relative</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.mouse_down"><a class="viewcode-back" href="../library.html#xdo.Xdo.mouse_down">[docs]</a>    <span class="k">def</span> <span class="nf">mouse_down</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a mouse press (aka mouse down) for a given button at</span>
+<span class="sd">        the current mouse location.</span>
+
+<span class="sd">        :param window:</span>
+<span class="sd">            The window you want to send the event to or CURRENTWINDOW</span>
+<span class="sd">        :param button:</span>
+<span class="sd">            The mouse button. Generally, 1 is left, 2 is middle, 3 is</span>
+<span class="sd">            right, 4 is wheel up, 5 is wheel down.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_mouse_down</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">button</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.mouse_up"><a class="viewcode-back" href="../library.html#xdo.Xdo.mouse_up">[docs]</a>    <span class="k">def</span> <span class="nf">mouse_up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a mouse release (aka mouse up) for a given button at</span>
+<span class="sd">        the current mouse location.</span>
+
+<span class="sd">        :param window:</span>
+<span class="sd">            The window you want to send the event to or CURRENTWINDOW</span>
+<span class="sd">        :param button:</span>
+<span class="sd">            The mouse button. Generally, 1 is left, 2 is middle, 3 is</span>
+<span class="sd">            right, 4 is wheel up, 5 is wheel down.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_mouse_up</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">button</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_mouse_location"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_mouse_location">[docs]</a>    <span class="k">def</span> <span class="nf">get_mouse_location</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current mouse location (coordinates and screen number).</span>
+
+<span class="sd">        :return: a namedtuple with ``x``, ``y`` and ``screen_num`` fields</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">screen_num</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_mouse_location</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">screen_num</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">mouse_location</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">screen_num</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_window_at_mouse"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_window_at_mouse">[docs]</a>    <span class="k">def</span> <span class="nf">get_window_at_mouse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the window the mouse is currently over</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">window_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_ulong</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_window_at_mouse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">window_ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">window_ret</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_mouse_location2"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_mouse_location2">[docs]</a>    <span class="k">def</span> <span class="nf">get_mouse_location2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all mouse location-related data.</span>
+
+<span class="sd">        :return: a namedtuple with ``x``, ``y``, ``screen_num``</span>
+<span class="sd">            and ``window`` fields</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">screen_num_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_ulong</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">window_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_ulong</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_mouse_location2</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">screen_num_ret</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">window_ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">mouse_location2</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">screen_num_ret</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                               <span class="n">window_ret</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.wait_for_mouse_move_from"><a class="viewcode-back" href="../library.html#xdo.Xdo.wait_for_mouse_move_from">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_mouse_move_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin_x</span><span class="p">,</span> <span class="n">origin_y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait for the mouse to move from a location. This function will block</span>
+<span class="sd">        until the condition has been satisified.</span>
+
+<span class="sd">        :param origin_x: the X position you expect the mouse to move from</span>
+<span class="sd">        :param origin_y: the Y position you expect the mouse to move from</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_wait_for_mouse_move_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">origin_x</span><span class="p">,</span> <span class="n">origin_y</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.wait_for_mouse_move_to"><a class="viewcode-back" href="../library.html#xdo.Xdo.wait_for_mouse_move_to">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_mouse_move_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dest_x</span><span class="p">,</span> <span class="n">dest_y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait for the mouse to move to a location. This function will block</span>
+<span class="sd">        until the condition has been satisified.</span>
+
+<span class="sd">        :param dest_x: the X position you expect the mouse to move to</span>
+<span class="sd">        :param dest_y: the Y position you expect the mouse to move to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_wait_for_mouse_move_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">dest_x</span><span class="p">,</span> <span class="n">dest_y</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.click_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.click_window">[docs]</a>    <span class="k">def</span> <span class="nf">click_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a click for a specific mouse button at the current mouse location.</span>
+
+<span class="sd">        :param window:</span>
+<span class="sd">            The window you want to send the event to or CURRENTWINDOW</span>
+<span class="sd">        :param button:</span>
+<span class="sd">            The mouse button. Generally, 1 is left, 2 is middle, 3 is</span>
+<span class="sd">            right, 4 is wheel up, 5 is wheel down.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_click_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">button</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.click_window_multiple"><a class="viewcode-back" href="../library.html#xdo.Xdo.click_window_multiple">[docs]</a>    <span class="k">def</span> <span class="nf">click_window_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">button</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">100000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a one or more clicks for a specific mouse button at the</span>
+<span class="sd">        current mouse location.</span>
+
+<span class="sd">        :param window:</span>
+<span class="sd">            The window you want to send the event to or CURRENTWINDOW</span>
+<span class="sd">        :param button:</span>
+<span class="sd">            The mouse button. Generally, 1 is left, 2 is middle, 3 is</span>
+<span class="sd">            right, 4 is wheel up, 5 is wheel down.</span>
+<span class="sd">        :param repeat: number of repetitions (default: 2)</span>
+<span class="sd">        :param delay: delay between clicks, in microseconds (default: 100k)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_click_window_multiple</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">button</span><span class="p">,</span> <span class="n">repeat</span><span class="p">,</span> <span class="n">delay</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.enter_text_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.enter_text_window">[docs]</a>    <span class="k">def</span> <span class="nf">enter_text_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">12000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Type a string to the specified window.</span>
+
+<span class="sd">        If you want to send a specific key or key sequence, such as</span>
+<span class="sd">        &quot;alt+l&quot;, you want instead ``send_keysequence_window(...)``.</span>
+
+<span class="sd">        :param window:</span>
+<span class="sd">            The window you want to send keystrokes to or CURRENTWINDOW</span>
+<span class="sd">        :param string:</span>
+<span class="sd">            The string to type, like &quot;Hello world!&quot;</span>
+<span class="sd">        :param delay:</span>
+<span class="sd">            The delay between keystrokes in microseconds.</span>
+<span class="sd">            12000 is a decent choice if you don&#39;t have other plans.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_enter_text_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">delay</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.send_keysequence_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.send_keysequence_window">[docs]</a>    <span class="k">def</span> <span class="nf">send_keysequence_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">keysequence</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">12000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a keysequence to the specified window.</span>
+
+<span class="sd">        This allows you to send keysequences by symbol name. Any combination</span>
+<span class="sd">        of X11 KeySym names separated by &#39;+&#39; are valid. Single KeySym names</span>
+<span class="sd">        are valid, too.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">          &quot;l&quot;</span>
+<span class="sd">          &quot;semicolon&quot;</span>
+<span class="sd">          &quot;alt+Return&quot;</span>
+<span class="sd">          &quot;Alt_L+Tab&quot;</span>
+
+<span class="sd">        If you want to type a string, such as &quot;Hello world.&quot; you want to</span>
+<span class="sd">        instead use xdo_enter_text_window.</span>
+
+<span class="sd">        :param window: The window you want to send the keysequence to or</span>
+<span class="sd">          CURRENTWINDOW</span>
+<span class="sd">        :param keysequence: The string keysequence to send.</span>
+<span class="sd">        :param delay: The delay between keystrokes in microseconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_send_keysequence_window</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">keysequence</span><span class="p">,</span> <span class="n">delay</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.send_keysequence_window_up"><a class="viewcode-back" href="../library.html#xdo.Xdo.send_keysequence_window_up">[docs]</a>    <span class="k">def</span> <span class="nf">send_keysequence_window_up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">keysequence</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">12000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send key release (up) events for the given key sequence&quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_send_keysequence_window_up</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">keysequence</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">12000</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.send_keysequence_window_down"><a class="viewcode-back" href="../library.html#xdo.Xdo.send_keysequence_window_down">[docs]</a>    <span class="k">def</span> <span class="nf">send_keysequence_window_down</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">keysequence</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">12000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send key press (down) events for the given key sequence&quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_send_keysequence_window_down</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">keysequence</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">12000</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.send_keysequence_window_list_do"><a class="viewcode-back" href="../library.html#xdo.Xdo.send_keysequence_window_list_do">[docs]</a>    <span class="k">def</span> <span class="nf">send_keysequence_window_list_do</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">pressed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">120000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a series of keystrokes.</span>
+
+<span class="sd">        :param window: The window to send events to or CURRENTWINDOW</span>
+<span class="sd">        :param keys: The array of charcodemap_t entities to send.</span>
+<span class="sd">        :param pressed: 1 for key press, 0 for key release.</span>
+<span class="sd">        :param modifier:</span>
+<span class="sd">            Pointer to integer to record the modifiers</span>
+<span class="sd">            activated by the keys being pressed. If NULL, we don&#39;t save</span>
+<span class="sd">            the modifiers.</span>
+<span class="sd">        :param delay:</span>
+<span class="sd">            The delay between keystrokes in microseconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># todo: how to properly use charcodes_t in a nice way?</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_send_keysequence_window_list_do</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">pressed</span><span class="p">,</span> <span class="n">modifier</span><span class="p">,</span> <span class="n">delay</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_active_keys_to_keycode_list"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_active_keys_to_keycode_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_active_keys_to_keycode_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of active keys. Uses XQueryKeymap&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_active_keys_to_keycode_list</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c"># Apparently, this was implemented in a later version..</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">charcodemap_t</span><span class="p">)</span>
+        <span class="n">nkeys</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_active_keys_to_keycode_list</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">nkeys</span><span class="p">))</span>
+
+        <span class="c"># todo: make sure this returns a list of charcodemap_t!</span>
+        <span class="k">return</span> <span class="n">keys</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.wait_for_window_map_state"><a class="viewcode-back" href="../library.html#xdo.Xdo.wait_for_window_map_state">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_window_map_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait for a window to have a specific map state.</span>
+
+<span class="sd">        State possibilities:</span>
+<span class="sd">          IsUnmapped - window is not displayed.</span>
+<span class="sd">          IsViewable - window is mapped and shown (though may be</span>
+<span class="sd">              clipped by windows on top of it)</span>
+<span class="sd">          IsUnviewable - window is mapped but a parent window is unmapped.</span>
+
+<span class="sd">        :param window: the window you want to wait for.</span>
+<span class="sd">        :param state: the state to wait for.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_wait_for_window_map_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.wait_for_window_size"><a class="viewcode-back" href="../library.html#xdo.Xdo.wait_for_window_size">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_window_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">to_or_from</span><span class="p">):</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_wait_for_window_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.wait_for_window_size_to"><a class="viewcode-back" href="../library.html#xdo.Xdo.wait_for_window_size_to">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_window_size_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_window_size</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.wait_for_window_size_from"><a class="viewcode-back" href="../library.html#xdo.Xdo.wait_for_window_size_from">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_window_size_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_window_size</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.move_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.move_window">[docs]</a>    <span class="k">def</span> <span class="nf">move_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move a window to a specific location.</span>
+
+<span class="sd">        The top left corner of the window will be moved to the x,y coordinate.</span>
+
+<span class="sd">        :param wid: the window to move</span>
+<span class="sd">        :param x: the X coordinate to move to.</span>
+<span class="sd">        :param y: the Y coordinate to move to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_move_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.translate_window_with_sizehint"><a class="viewcode-back" href="../library.html#xdo.Xdo.translate_window_with_sizehint">[docs]</a>    <span class="k">def</span> <span class="nf">translate_window_with_sizehint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply a window&#39;s sizing hints (if any) to a given width and height.</span>
+
+<span class="sd">        This function wraps XGetWMNormalHints() and applies any</span>
+<span class="sd">        resize increment and base size to your given width and height values.</span>
+
+<span class="sd">        :param window: the window to use</span>
+<span class="sd">        :param width: the unit width you want to translate</span>
+<span class="sd">        :param height: the unit height you want to translate</span>
+<span class="sd">        :return: (width, height)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">width_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">height_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_translate_window_with_sizehint</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">width_ret</span><span class="p">),</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">height_ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">width_ret</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">height_ret</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_window_size"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_window_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_window_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change the window size.</span>
+
+<span class="sd">        :param wid: the window to resize</span>
+<span class="sd">        :param w: the new desired width</span>
+<span class="sd">        :param h: the new desired height</span>
+<span class="sd">        :param flags: if 0, use pixels for units. If SIZE_USEHINTS, then</span>
+<span class="sd">            the units will be relative to the window size hints.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_set_window_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_window_property"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_window_property">[docs]</a>    <span class="k">def</span> <span class="nf">set_window_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change a window property.</span>
+
+<span class="sd">        Example properties you can change are WM_NAME, WM_ICON_NAME, etc.</span>
+
+<span class="sd">        :param wid: The window to change a property of.</span>
+<span class="sd">        :param name: the string name of the property.</span>
+<span class="sd">        :param value: the string value of the property.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_set_window_property</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_window_class"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_window_class">[docs]</a>    <span class="k">def</span> <span class="nf">set_window_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">class_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change the window&#39;s classname and or class.</span>
+
+<span class="sd">        :param name: The new class name. If ``None``, no change.</span>
+<span class="sd">        :param class_: The new class. If ``None``, no change.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_set_window_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">class_</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_window_urgency"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_window_urgency">[docs]</a>    <span class="k">def</span> <span class="nf">set_window_urgency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">urgency</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the urgency hint for a window&quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_set_window_urgency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">urgency</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_window_override_redirect"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_window_override_redirect">[docs]</a>    <span class="k">def</span> <span class="nf">set_window_override_redirect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">override_redirect</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the override_redirect value for a window. This generally means</span>
+<span class="sd">        whether or not a window manager will manage this window.</span>
+
+<span class="sd">        If you set it to 1, the window manager will usually not draw</span>
+<span class="sd">        borders on the window, etc. If you set it to 0, the window manager</span>
+<span class="sd">         will see it like a normal application window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_set_window_override_redirect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">override_redirect</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.focus_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.focus_window">[docs]</a>    <span class="k">def</span> <span class="nf">focus_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Focus a window.</span>
+
+<span class="sd">        :see: xdo_activate_window</span>
+<span class="sd">        :param wid: the window to focus.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_focus_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.raise_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.raise_window">[docs]</a>    <span class="k">def</span> <span class="nf">raise_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Raise a window to the top of the window stack. This is also sometimes</span>
+<span class="sd">        termed as bringing the window forward.</span>
+
+<span class="sd">        :param wid: The window to raise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_raise_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_focused_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_focused_window">[docs]</a>    <span class="k">def</span> <span class="nf">get_focused_window</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the window currently having focus.</span>
+
+<span class="sd">        :param window_ret:</span>
+<span class="sd">        Pointer to a window where the currently-focused window</span>
+<span class="sd">        will be stored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">window_ret</span> <span class="o">=</span> <span class="n">window_t</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_focused_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">window_ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">window_ret</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.wait_for_window_focus"><a class="viewcode-back" href="../library.html#xdo.Xdo.wait_for_window_focus">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_window_focus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">want_focus</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait for a window to have or lose focus.</span>
+
+<span class="sd">        :param window: The window to wait on</span>
+<span class="sd">        :param want_focus: If 1, wait for focus. If 0, wait for loss of focus.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_wait_for_window_focus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">want_focus</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_pid_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_pid_window">[docs]</a>    <span class="k">def</span> <span class="nf">get_pid_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the PID owning a window. Not all applications support this.</span>
+<span class="sd">        It looks at the ``_NET_WM_PID`` property of the window.</span>
+
+<span class="sd">        :param window: the window to query.</span>
+<span class="sd">        :return: the process id or 0 if no pid found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># todo: if the pid is 0, it means &quot;not found&quot; -&gt; exception?</span>
+        <span class="k">return</span> <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_pid_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_focused_window_sane"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_focused_window_sane">[docs]</a>    <span class="k">def</span> <span class="nf">get_focused_window_sane</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Like xdo_get_focused_window, but return the first ancestor-or-self</span>
+<span class="sd">        window * having a property of WM_CLASS. This allows you to get</span>
+<span class="sd">        the &quot;real&quot; or top-level-ish window having focus rather than something</span>
+<span class="sd">        you may not expect to be the window having focused.</span>
+
+<span class="sd">        :param window_ret:</span>
+<span class="sd">            Pointer to a window where the currently-focused window</span>
+<span class="sd">            will be stored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">window_ret</span> <span class="o">=</span> <span class="n">window_t</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_focused_window_sane</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">window_ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">window_ret</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.activate_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.activate_window">[docs]</a>    <span class="k">def</span> <span class="nf">activate_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Activate a window. This is generally a better choice than</span>
+<span class="sd">        xdo_focus_window for a variety of reasons, but it requires window</span>
+<span class="sd">        manager support:</span>
+
+<span class="sd">        - If the window is on another desktop, that desktop is switched to.</span>
+<span class="sd">        - It moves the window forward rather than simply focusing it</span>
+
+<span class="sd">        Requires your window manager to support this.</span>
+<span class="sd">        Uses _NET_ACTIVE_WINDOW from the EWMH spec.</span>
+
+<span class="sd">        :param wid: the window to activate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_activate_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.wait_for_window_active"><a class="viewcode-back" href="../library.html#xdo.Xdo.wait_for_window_active">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_window_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait for a window to be active or not active.</span>
+
+<span class="sd">        Requires your window manager to support this.</span>
+<span class="sd">        Uses _NET_ACTIVE_WINDOW from the EWMH spec.</span>
+
+<span class="sd">        :param window: the window to wait on</span>
+<span class="sd">        :param active: If 1, wait for active. If 0, wait for inactive.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_wait_for_window_active</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">active</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.map_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.map_window">[docs]</a>    <span class="k">def</span> <span class="nf">map_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Map a window. This mostly means to make the window visible if it is</span>
+<span class="sd">        not currently mapped.</span>
+
+<span class="sd">        :param wid: the window to map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_map_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.unmap_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.unmap_window">[docs]</a>    <span class="k">def</span> <span class="nf">unmap_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unmap a window</span>
+
+<span class="sd">        :param wid: the window to unmap</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_unmap_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.minimize_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.minimize_window">[docs]</a>    <span class="k">def</span> <span class="nf">minimize_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Minimize a window&quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_minimize_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.reparent_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.reparent_window">[docs]</a>    <span class="k">def</span> <span class="nf">reparent_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_source</span><span class="p">,</span> <span class="n">window_target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reparents a window</span>
+
+<span class="sd">        :param wid_source: the window to reparent</span>
+<span class="sd">        :param wid_target: the new parent window</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_reparent_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window_source</span><span class="p">,</span> <span class="n">window_target</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_window_location"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_window_location">[docs]</a>    <span class="k">def</span> <span class="nf">get_window_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a window&#39;s location.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">screen_ret</span> <span class="o">=</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">Screen</span><span class="p">)</span>
+        <span class="n">x_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">y_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_window_location</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">x_ret</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">y_ret</span><span class="p">),</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">screen_ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">window_location</span><span class="p">(</span><span class="n">x_ret</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">y_ret</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">screen_ret</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_window_size"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_window_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_window_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a window&#39;s size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">w_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">h_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_window_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">w_ret</span><span class="p">),</span>
+                                    <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">h_ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">window_size</span><span class="p">(</span><span class="n">w_ret</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">h_ret</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_active_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_active_window">[docs]</a>    <span class="k">def</span> <span class="nf">get_active_window</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the currently-active window.</span>
+<span class="sd">        Requires your window manager to support this.</span>
+<span class="sd">        Uses ``_NET_ACTIVE_WINDOW`` from the EWMH spec.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">window_ret</span> <span class="o">=</span> <span class="n">window_t</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_active_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">window_ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">window_ret</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.select_window_with_click"><a class="viewcode-back" href="../library.html#xdo.Xdo.select_window_with_click">[docs]</a>    <span class="k">def</span> <span class="nf">select_window_with_click</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a window ID by clicking on it.</span>
+<span class="sd">        This function blocks until a selection is made.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">window_ret</span> <span class="o">=</span> <span class="n">window_t</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_select_window_with_click</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">window_ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">window_ret</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_number_of_desktops"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_number_of_desktops">[docs]</a>    <span class="k">def</span> <span class="nf">set_number_of_desktops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ndesktops</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the number of desktops.</span>
+<span class="sd">        Uses ``_NET_NUMBER_OF_DESKTOPS`` of the EWMH spec.</span>
+
+<span class="sd">        :param ndesktops: the new number of desktops to set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_set_number_of_desktops</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ndesktops</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_number_of_desktops"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_number_of_desktops">[docs]</a>    <span class="k">def</span> <span class="nf">get_number_of_desktops</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current number of desktops.</span>
+<span class="sd">        Uses ``_NET_NUMBER_OF_DESKTOPS`` of the EWMH spec.</span>
+
+<span class="sd">        :param ndesktops:</span>
+<span class="sd">            pointer to long where the current number of desktops is stored</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ndesktops</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_number_of_desktops</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">ndesktops</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ndesktops</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_current_desktop"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_current_desktop">[docs]</a>    <span class="k">def</span> <span class="nf">set_current_desktop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desktop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Switch to another desktop.</span>
+<span class="sd">        Uses ``_NET_CURRENT_DESKTOP`` of the EWMH spec.</span>
+
+<span class="sd">        :param desktop: The desktop number to switch to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_set_current_desktop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">desktop</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_current_desktop"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_current_desktop">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_desktop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current desktop.</span>
+<span class="sd">        Uses ``_NET_CURRENT_DESKTOP`` of the EWMH spec.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">desktop</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_current_desktop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">desktop</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">desktop</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_desktop_for_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_desktop_for_window">[docs]</a>    <span class="k">def</span> <span class="nf">set_desktop_for_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">desktop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move a window to another desktop</span>
+<span class="sd">        Uses _NET_WM_DESKTOP of the EWMH spec.</span>
+
+<span class="sd">        :param wid: the window to move</span>
+<span class="sd">        :param desktop: the desktop destination for the window</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_set_desktop_for_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">desktop</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_desktop_for_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_desktop_for_window">[docs]</a>    <span class="k">def</span> <span class="nf">get_desktop_for_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the desktop a window is on.</span>
+<span class="sd">        Uses _NET_WM_DESKTOP of the EWMH spec.</span>
+
+<span class="sd">        If your desktop does not support ``_NET_WM_DESKTOP``, then &#39;*desktop&#39;</span>
+<span class="sd">        remains unmodified.</span>
+
+<span class="sd">        :param wid: the window to query</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">desktop</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_desktop_for_window</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">desktop</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">desktop</span><span class="o">.</span><span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Xdo.search_windows"><a class="viewcode-back" href="../library.html#xdo.Xdo.search_windows">[docs]</a>    <span class="k">def</span> <span class="nf">search_windows</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">winname</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">winclass</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">winclassname</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">pid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">only_visible</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">require</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+            <span class="n">searchmask</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">desktop</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search for windows.</span>
+
+<span class="sd">        :param winname:</span>
+<span class="sd">            Regexp to be matched against window name</span>
+<span class="sd">        :param winclass:</span>
+<span class="sd">            Regexp to be matched against window class</span>
+<span class="sd">        :param winclassname:</span>
+<span class="sd">            Regexp to be matched against window class name</span>
+<span class="sd">        :param pid:</span>
+<span class="sd">            Only return windows from this PID</span>
+<span class="sd">        :param only_visible:</span>
+<span class="sd">            If True, only return visible windows</span>
+<span class="sd">        :param screen:</span>
+<span class="sd">            Search only windows on this screen</span>
+<span class="sd">        :param require:</span>
+<span class="sd">            If True, will match ALL conditions. Otherwise, windows matching</span>
+<span class="sd">            ANY condition will be returned.</span>
+<span class="sd">        :param searchmask:</span>
+<span class="sd">            Search mask, for advanced usage. Leave this alone if you</span>
+<span class="sd">            don&#39;t kwnow what you are doing.</span>
+<span class="sd">        :param limit:</span>
+<span class="sd">            Maximum number of windows to list. Zero means no limit.</span>
+<span class="sd">        :param max_depth:</span>
+<span class="sd">            Maximum depth to return. Defaults to -1, meaning &quot;no limit&quot;.</span>
+<span class="sd">        :return:</span>
+<span class="sd">            A list of window ids matching query.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">windowlist_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">pointer</span><span class="p">(</span><span class="n">window_t</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">nwindows_ret</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">search</span> <span class="o">=</span> <span class="n">xdo_search_t</span><span class="p">(</span><span class="n">searchmask</span><span class="o">=</span><span class="n">searchmask</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">winname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">winname</span> <span class="o">=</span> <span class="n">winname</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">searchmask</span> <span class="o">|=</span> <span class="n">SEARCH_NAME</span>
+
+        <span class="k">if</span> <span class="n">winclass</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">winclass</span> <span class="o">=</span> <span class="n">winclass</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">searchmask</span> <span class="o">|=</span> <span class="n">SEARCH_CLASS</span>
+
+        <span class="k">if</span> <span class="n">winclassname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">winclassname</span> <span class="o">=</span> <span class="n">winclassname</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">searchmask</span> <span class="o">|=</span> <span class="n">SEARCH_CLASSNAME</span>
+
+        <span class="k">if</span> <span class="n">pid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">searchmask</span> <span class="o">|=</span> <span class="n">SEARCH_PID</span>
+
+        <span class="k">if</span> <span class="n">only_visible</span><span class="p">:</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">only_visible</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">searchmask</span> <span class="o">|=</span> <span class="n">SEARCH_ONLYVISIBLE</span>
+
+        <span class="k">if</span> <span class="n">screen</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">screen</span> <span class="o">=</span> <span class="n">screen</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">searchmask</span> <span class="o">|=</span> <span class="n">SEARCH_SCREEN</span>
+
+        <span class="k">if</span> <span class="n">screen</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">screen</span> <span class="o">=</span> <span class="n">desktop</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">searchmask</span> <span class="o">|=</span> <span class="n">SEARCH_DESKTOP</span>
+
+        <span class="n">search</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="n">search</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">max_depth</span>
+
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_search_windows</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">search</span><span class="p">,</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">windowlist_ret</span><span class="p">),</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">nwindows_ret</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">windowlist_ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nwindows_ret</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_window_property_by_atom"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_window_property_by_atom">[docs]</a>    <span class="k">def</span> <span class="nf">get_window_property_by_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
+        <span class="c"># todo: figure out what exactly this method does, and implement it</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span>
+            <span class="s">&quot;get_window_property_by_atom() is not implemented (yet)&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_window_property"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_window_property">[docs]</a>    <span class="k">def</span> <span class="nf">get_window_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">()</span>  <span class="c"># unsigned char **value</span>
+        <span class="n">nitems</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">()</span>
+        <span class="n">type_</span> <span class="o">=</span> <span class="n">Atom</span><span class="p">()</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_window_property</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">nitems</span><span class="p">),</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">type_</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+
+        <span class="c"># todo: we need to convert atoms into their actual type..</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nitems</span><span class="p">):</span>
+            <span class="n">i_val</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c"># i_type = type_[i]</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_val</span><span class="p">)</span>
+            <span class="c"># todo: perform type conversion for &quot;Atom&quot;s of this type?</span>
+            <span class="c"># todo: how does the &quot;Atom&quot; thing work?</span>
+
+        <span class="k">return</span> <span class="n">values</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_input_state"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_input_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_input_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current input state.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            a namedtuple with the following (boolean) fields:</span>
+<span class="sd">            shift, lock, control, mod1, mod2, mod3, mod4, mod5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_input_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_gen_input_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_symbol_map"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_symbol_map">[docs]</a>    <span class="k">def</span> <span class="nf">get_symbol_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If you need the symbol map, use this method.</span>
+
+<span class="sd">        The symbol map is an array of string pairs mapping common tokens</span>
+<span class="sd">        to X Keysym strings, such as &quot;alt&quot; to &quot;Alt_L&quot;</span>
+
+<span class="sd">        :return: array of strings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># todo: make sure we return a list of strings!</span>
+        <span class="n">sm</span> <span class="o">=</span> <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_symbol_map</span><span class="p">()</span>
+
+        <span class="c"># Return value is like:</span>
+        <span class="c"># [&#39;alt&#39;, &#39;Alt_L&#39;, ..., None, None, None, ...]</span>
+        <span class="c"># We want to return only values up to the first None.</span>
+        <span class="c"># todo: any better solution than this?</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">sm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ret</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_active_modifiers"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_active_modifiers">[docs]</a>    <span class="k">def</span> <span class="nf">get_active_modifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of active keys. Uses XQueryKeymap.</span>
+
+<span class="sd">        :return: list of charcodemap_t instances</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">pointer</span><span class="p">(</span><span class="n">charcodemap_t</span><span class="p">())</span>
+        <span class="n">nkeys</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_get_active_modifiers</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">nkeys</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nkeys</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+</div>
+<div class="viewcode-block" id="Xdo.clear_active_modifiers"><a class="viewcode-back" href="../library.html#xdo.Xdo.clear_active_modifiers">[docs]</a>    <span class="k">def</span> <span class="nf">clear_active_modifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">mods</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send any events necesary to clear the the active modifiers.</span>
+<span class="sd">        For example, if you are holding &#39;alt&#39; when xdo_get_active_modifiers is</span>
+<span class="sd">        called, then this method will send a key-up for &#39;alt&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_active_modifiers"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_active_modifiers">[docs]</a>    <span class="k">def</span> <span class="nf">set_active_modifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">mods</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send any events necessary to make these modifiers active.</span>
+<span class="sd">        This is useful if you just cleared the active modifiers and then wish</span>
+<span class="sd">        to restore them after.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_desktop_viewport"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_desktop_viewport">[docs]</a>    <span class="k">def</span> <span class="nf">get_desktop_viewport</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the position of the current viewport.</span>
+
+<span class="sd">        This is only relevant if your window manager supports</span>
+<span class="sd">        ``_NET_DESKTOP_VIEWPORT``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Xdo.set_desktop_viewport"><a class="viewcode-back" href="../library.html#xdo.Xdo.set_desktop_viewport">[docs]</a>    <span class="k">def</span> <span class="nf">set_desktop_viewport</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the position of the current viewport.</span>
+
+<span class="sd">        This is only relevant if your window manager supports</span>
+<span class="sd">        ``_NET_DESKTOP_VIEWPORT``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Xdo.kill_window"><a class="viewcode-back" href="../library.html#xdo.Xdo.kill_window">[docs]</a>    <span class="k">def</span> <span class="nf">kill_window</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kill a window and the client owning it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+    <span class="n">XDO_FIND_PARENTS</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">XDO_FIND_CHILDREN</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="Xdo.find_window_client"><a class="viewcode-back" href="../library.html#xdo.Xdo.find_window_client">[docs]</a>    <span class="k">def</span> <span class="nf">find_window_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find a client window (child) in a given window. Useful if you get the</span>
+<span class="sd">        window manager&#39;s decorator window rather than the client window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_window_name"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_window_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_window_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a window&#39;s name, if any.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Xdo.enable_feature"><a class="viewcode-back" href="../library.html#xdo.Xdo.enable_feature">[docs]</a>    <span class="k">def</span> <span class="nf">enable_feature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable an xdo feature.</span>
+
+<span class="sd">        This function is mainly used by libxdo itself, however,</span>
+<span class="sd">        you may find it useful in your own applications.</span>
+
+<span class="sd">        :see: XDO_FEATURES</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Xdo.has_feature"><a class="viewcode-back" href="../library.html#xdo.Xdo.has_feature">[docs]</a>    <span class="k">def</span> <span class="nf">has_feature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a feature is enabled.</span>
+
+<span class="sd">        This function is mainly used by libxdo itself, however,</span>
+<span class="sd">        you may find it useful in your own applications.</span>
+
+<span class="sd">        :see: XDO_FEATURES</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Xdo.get_viewport_dimensions"><a class="viewcode-back" href="../library.html#xdo.Xdo.get_viewport_dimensions">[docs]</a>    <span class="k">def</span> <span class="nf">get_viewport_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query the viewport (your display) dimensions</span>
+
+<span class="sd">        If Xinerama is active and supported, that api internally is used.</span>
+<span class="sd">        If Xineram is disabled, we will report the root window&#39;s dimensions</span>
+<span class="sd">        for the given screen.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_libxdo</span><span class="o">.</span><span class="n">xdo_free</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xdo</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Samuele Santi.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1a',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

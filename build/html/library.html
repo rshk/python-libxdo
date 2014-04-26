@@ -1,0 +1,1287 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Library documentation &mdash; python-libxdo 0.1a documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="python-libxdo 0.1a documentation" href="index.html"/>
+        <link rel="prev" title="Welcome to python-libxdo’s documentation!" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> python-libxdo</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Library documentation</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">python-libxdo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Library documentation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/library.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-xdo">
+<span id="library-documentation"></span><h1>Library documentation<a class="headerlink" href="#module-xdo" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="xdo.Xdo">
+<em class="property">class </em><tt class="descclassname">xdo.</tt><tt class="descname">Xdo</tt><big>(</big><em>display=None</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="xdo.Xdo.XDO_FIND_CHILDREN">
+<tt class="descname">XDO_FIND_CHILDREN</tt><em class="property"> = 1</em><a class="headerlink" href="#xdo.Xdo.XDO_FIND_CHILDREN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.Xdo.XDO_FIND_PARENTS">
+<tt class="descname">XDO_FIND_PARENTS</tt><em class="property"> = 0</em><a class="headerlink" href="#xdo.Xdo.XDO_FIND_PARENTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.activate_window">
+<tt class="descname">activate_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.activate_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.activate_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate a window. This is generally a better choice than
+xdo_focus_window for a variety of reasons, but it requires window
+manager support:</p>
+<ul class="simple">
+<li>If the window is on another desktop, that desktop is switched to.</li>
+<li>It moves the window forward rather than simply focusing it</li>
+</ul>
+<p>Requires your window manager to support this.
+Uses _NET_ACTIVE_WINDOW from the EWMH spec.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wid</strong> &#8211; the window to activate</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.clear_active_modifiers">
+<tt class="descname">clear_active_modifiers</tt><big>(</big><em>window</em>, <em>mods=None</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.clear_active_modifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.clear_active_modifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send any events necesary to clear the the active modifiers.
+For example, if you are holding &#8216;alt&#8217; when xdo_get_active_modifiers is
+called, then this method will send a key-up for &#8216;alt&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.click_window">
+<tt class="descname">click_window</tt><big>(</big><em>window</em>, <em>button</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.click_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.click_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a click for a specific mouse button at the current mouse location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; The window you want to send the event to or CURRENTWINDOW</li>
+<li><strong>button</strong> &#8211; The mouse button. Generally, 1 is left, 2 is middle, 3 is
+right, 4 is wheel up, 5 is wheel down.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.click_window_multiple">
+<tt class="descname">click_window_multiple</tt><big>(</big><em>window</em>, <em>button</em>, <em>repeat=2</em>, <em>delay=100000</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.click_window_multiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.click_window_multiple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a one or more clicks for a specific mouse button at the
+current mouse location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; The window you want to send the event to or CURRENTWINDOW</li>
+<li><strong>button</strong> &#8211; The mouse button. Generally, 1 is left, 2 is middle, 3 is
+right, 4 is wheel up, 5 is wheel down.</li>
+<li><strong>repeat</strong> &#8211; number of repetitions (default: 2)</li>
+<li><strong>delay</strong> &#8211; delay between clicks, in microseconds (default: 100k)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.enable_feature">
+<tt class="descname">enable_feature</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.enable_feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.enable_feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable an xdo feature.</p>
+<p>This function is mainly used by libxdo itself, however,
+you may find it useful in your own applications.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">See:</th><td class="field-body">XDO_FEATURES</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.enter_text_window">
+<tt class="descname">enter_text_window</tt><big>(</big><em>window</em>, <em>string</em>, <em>delay=12000</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.enter_text_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.enter_text_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type a string to the specified window.</p>
+<p>If you want to send a specific key or key sequence, such as
+&#8220;alt+l&#8221;, you want instead <tt class="docutils literal"><span class="pre">send_keysequence_window(...)</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; The window you want to send keystrokes to or CURRENTWINDOW</li>
+<li><strong>string</strong> &#8211; The string to type, like &#8220;Hello world!&#8221;</li>
+<li><strong>delay</strong> &#8211; The delay between keystrokes in microseconds.
+12000 is a decent choice if you don&#8217;t have other plans.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.find_window_client">
+<tt class="descname">find_window_client</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.find_window_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.find_window_client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a client window (child) in a given window. Useful if you get the
+window manager&#8217;s decorator window rather than the client window.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.focus_window">
+<tt class="descname">focus_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.focus_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.focus_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Focus a window.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">See:</th><td class="field-body">xdo_activate_window</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wid</strong> &#8211; the window to focus.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_active_keys_to_keycode_list">
+<tt class="descname">get_active_keys_to_keycode_list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_active_keys_to_keycode_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_active_keys_to_keycode_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of active keys. Uses XQueryKeymap</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_active_modifiers">
+<tt class="descname">get_active_modifiers</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_active_modifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_active_modifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of active keys. Uses XQueryKeymap.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of charcodemap_t instances</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_active_window">
+<tt class="descname">get_active_window</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_active_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_active_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the currently-active window.
+Requires your window manager to support this.
+Uses <tt class="docutils literal"><span class="pre">_NET_ACTIVE_WINDOW</span></tt> from the EWMH spec.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_current_desktop">
+<tt class="descname">get_current_desktop</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_current_desktop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_current_desktop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current desktop.
+Uses <tt class="docutils literal"><span class="pre">_NET_CURRENT_DESKTOP</span></tt> of the EWMH spec.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_desktop_for_window">
+<tt class="descname">get_desktop_for_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_desktop_for_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_desktop_for_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desktop a window is on.
+Uses _NET_WM_DESKTOP of the EWMH spec.</p>
+<p>If your desktop does not support <tt class="docutils literal"><span class="pre">_NET_WM_DESKTOP</span></tt>, then &#8216;<a href="#id1"><span class="problematic" id="id2">*</span></a>desktop&#8217;
+remains unmodified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wid</strong> &#8211; the window to query</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_desktop_viewport">
+<tt class="descname">get_desktop_viewport</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_desktop_viewport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_desktop_viewport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the position of the current viewport.</p>
+<p>This is only relevant if your window manager supports
+<tt class="docutils literal"><span class="pre">_NET_DESKTOP_VIEWPORT</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_focused_window">
+<tt class="descname">get_focused_window</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_focused_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_focused_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the window currently having focus.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>window_ret</strong> &#8211; </td>
+</tr>
+</tbody>
+</table>
+<p>Pointer to a window where the currently-focused window
+will be stored.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_focused_window_sane">
+<tt class="descname">get_focused_window_sane</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_focused_window_sane"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_focused_window_sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like xdo_get_focused_window, but return the first ancestor-or-self
+window * having a property of WM_CLASS. This allows you to get
+the &#8220;real&#8221; or top-level-ish window having focus rather than something
+you may not expect to be the window having focused.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>window_ret</strong> &#8211; Pointer to a window where the currently-focused window
+will be stored.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_input_state">
+<tt class="descname">get_input_state</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_input_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_input_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current input state.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a namedtuple with the following (boolean) fields:
+shift, lock, control, mod1, mod2, mod3, mod4, mod5</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_mouse_location">
+<tt class="descname">get_mouse_location</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_mouse_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_mouse_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current mouse location (coordinates and screen number).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a namedtuple with <tt class="docutils literal"><span class="pre">x</span></tt>, <tt class="docutils literal"><span class="pre">y</span></tt> and <tt class="docutils literal"><span class="pre">screen_num</span></tt> fields</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_mouse_location2">
+<tt class="descname">get_mouse_location2</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_mouse_location2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_mouse_location2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all mouse location-related data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a namedtuple with <tt class="docutils literal"><span class="pre">x</span></tt>, <tt class="docutils literal"><span class="pre">y</span></tt>, <tt class="docutils literal"><span class="pre">screen_num</span></tt>
+and <tt class="docutils literal"><span class="pre">window</span></tt> fields</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_number_of_desktops">
+<tt class="descname">get_number_of_desktops</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_number_of_desktops"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_number_of_desktops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current number of desktops.
+Uses <tt class="docutils literal"><span class="pre">_NET_NUMBER_OF_DESKTOPS</span></tt> of the EWMH spec.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ndesktops</strong> &#8211; pointer to long where the current number of desktops is stored</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_pid_window">
+<tt class="descname">get_pid_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_pid_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_pid_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the PID owning a window. Not all applications support this.
+It looks at the <tt class="docutils literal"><span class="pre">_NET_WM_PID</span></tt> property of the window.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>window</strong> &#8211; the window to query.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the process id or 0 if no pid found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_symbol_map">
+<tt class="descname">get_symbol_map</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_symbol_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_symbol_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>If you need the symbol map, use this method.</p>
+<p>The symbol map is an array of string pairs mapping common tokens
+to X Keysym strings, such as &#8220;alt&#8221; to &#8220;Alt_L&#8221;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array of strings.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_viewport_dimensions">
+<tt class="descname">get_viewport_dimensions</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_viewport_dimensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_viewport_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the viewport (your display) dimensions</p>
+<p>If Xinerama is active and supported, that api internally is used.
+If Xineram is disabled, we will report the root window&#8217;s dimensions
+for the given screen.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_window_at_mouse">
+<tt class="descname">get_window_at_mouse</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_window_at_mouse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_window_at_mouse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the window the mouse is currently over</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_window_location">
+<tt class="descname">get_window_location</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_window_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_window_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a window&#8217;s location.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_window_name">
+<tt class="descname">get_window_name</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_window_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_window_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a window&#8217;s name, if any.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_window_property">
+<tt class="descname">get_window_property</tt><big>(</big><em>window</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_window_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_window_property" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_window_property_by_atom">
+<tt class="descname">get_window_property_by_atom</tt><big>(</big><em>window</em>, <em>atom</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_window_property_by_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_window_property_by_atom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.get_window_size">
+<tt class="descname">get_window_size</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.get_window_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.get_window_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a window&#8217;s size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.has_feature">
+<tt class="descname">has_feature</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.has_feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.has_feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a feature is enabled.</p>
+<p>This function is mainly used by libxdo itself, however,
+you may find it useful in your own applications.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">See:</th><td class="field-body">XDO_FEATURES</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.kill_window">
+<tt class="descname">kill_window</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.kill_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.kill_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kill a window and the client owning it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.map_window">
+<tt class="descname">map_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.map_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.map_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map a window. This mostly means to make the window visible if it is
+not currently mapped.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wid</strong> &#8211; the window to map.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.minimize_window">
+<tt class="descname">minimize_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.minimize_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.minimize_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimize a window</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.mouse_down">
+<tt class="descname">mouse_down</tt><big>(</big><em>window</em>, <em>button</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.mouse_down"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.mouse_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a mouse press (aka mouse down) for a given button at
+the current mouse location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; The window you want to send the event to or CURRENTWINDOW</li>
+<li><strong>button</strong> &#8211; The mouse button. Generally, 1 is left, 2 is middle, 3 is
+right, 4 is wheel up, 5 is wheel down.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.mouse_up">
+<tt class="descname">mouse_up</tt><big>(</big><em>window</em>, <em>button</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.mouse_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.mouse_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a mouse release (aka mouse up) for a given button at
+the current mouse location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; The window you want to send the event to or CURRENTWINDOW</li>
+<li><strong>button</strong> &#8211; The mouse button. Generally, 1 is left, 2 is middle, 3 is
+right, 4 is wheel up, 5 is wheel down.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.move_mouse">
+<tt class="descname">move_mouse</tt><big>(</big><em>x</em>, <em>y</em>, <em>screen=0</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.move_mouse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.move_mouse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the mouse to a specific location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> &#8211; the target X coordinate on the screen in pixels.</li>
+<li><strong>y</strong> &#8211; the target Y coordinate on the screen in pixels.</li>
+<li><strong>screen</strong> &#8211; the screen (number) you want to move on.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.move_mouse_relative">
+<tt class="descname">move_mouse_relative</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.move_mouse_relative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.move_mouse_relative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the mouse relative to it&#8217;s current position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> &#8211; the distance in pixels to move on the X axis.</li>
+<li><strong>y</strong> &#8211; the distance in pixels to move on the Y axis.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.move_mouse_relative_to_window">
+<tt class="descname">move_mouse_relative_to_window</tt><big>(</big><em>window</em>, <em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.move_mouse_relative_to_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.move_mouse_relative_to_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the mouse to a specific location relative to the top-left corner
+of a window.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> &#8211; the target X coordinate on the screen in pixels.</li>
+<li><strong>y</strong> &#8211; the target Y coordinate on the screen in pixels.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.move_window">
+<tt class="descname">move_window</tt><big>(</big><em>window</em>, <em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.move_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.move_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move a window to a specific location.</p>
+<p>The top left corner of the window will be moved to the x,y coordinate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>wid</strong> &#8211; the window to move</li>
+<li><strong>x</strong> &#8211; the X coordinate to move to.</li>
+<li><strong>y</strong> &#8211; the Y coordinate to move to.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.raise_window">
+<tt class="descname">raise_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.raise_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.raise_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise a window to the top of the window stack. This is also sometimes
+termed as bringing the window forward.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wid</strong> &#8211; The window to raise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.reparent_window">
+<tt class="descname">reparent_window</tt><big>(</big><em>window_source</em>, <em>window_target</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.reparent_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.reparent_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reparents a window</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>wid_source</strong> &#8211; the window to reparent</li>
+<li><strong>wid_target</strong> &#8211; the new parent window</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.search_windows">
+<tt class="descname">search_windows</tt><big>(</big><em>winname=None</em>, <em>winclass=None</em>, <em>winclassname=None</em>, <em>pid=None</em>, <em>only_visible=False</em>, <em>screen=None</em>, <em>require=False</em>, <em>searchmask=0</em>, <em>desktop=None</em>, <em>limit=0</em>, <em>max_depth=-1</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.search_windows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.search_windows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for windows.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>winname</strong> &#8211; Regexp to be matched against window name</li>
+<li><strong>winclass</strong> &#8211; Regexp to be matched against window class</li>
+<li><strong>winclassname</strong> &#8211; Regexp to be matched against window class name</li>
+<li><strong>pid</strong> &#8211; Only return windows from this PID</li>
+<li><strong>only_visible</strong> &#8211; If True, only return visible windows</li>
+<li><strong>screen</strong> &#8211; Search only windows on this screen</li>
+<li><strong>require</strong> &#8211; If True, will match ALL conditions. Otherwise, windows matching
+ANY condition will be returned.</li>
+<li><strong>searchmask</strong> &#8211; Search mask, for advanced usage. Leave this alone if you
+don&#8217;t kwnow what you are doing.</li>
+<li><strong>limit</strong> &#8211; Maximum number of windows to list. Zero means no limit.</li>
+<li><strong>max_depth</strong> &#8211; Maximum depth to return. Defaults to -1, meaning &#8220;no limit&#8221;.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of window ids matching query.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.select_window_with_click">
+<tt class="descname">select_window_with_click</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.select_window_with_click"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.select_window_with_click" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a window ID by clicking on it.
+This function blocks until a selection is made.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.send_keysequence_window">
+<tt class="descname">send_keysequence_window</tt><big>(</big><em>window</em>, <em>keysequence</em>, <em>delay=12000</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.send_keysequence_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.send_keysequence_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a keysequence to the specified window.</p>
+<p>This allows you to send keysequences by symbol name. Any combination
+of X11 KeySym names separated by &#8216;+&#8217; are valid. Single KeySym names
+are valid, too.</p>
+<dl class="docutils">
+<dt>Examples:</dt>
+<dd>&#8220;l&#8221;
+&#8220;semicolon&#8221;
+&#8220;alt+Return&#8221;
+&#8220;Alt_L+Tab&#8221;</dd>
+</dl>
+<p>If you want to type a string, such as &#8220;Hello world.&#8221; you want to
+instead use xdo_enter_text_window.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; The window you want to send the keysequence to or
+CURRENTWINDOW</li>
+<li><strong>keysequence</strong> &#8211; The string keysequence to send.</li>
+<li><strong>delay</strong> &#8211; The delay between keystrokes in microseconds.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.send_keysequence_window_down">
+<tt class="descname">send_keysequence_window_down</tt><big>(</big><em>window</em>, <em>keysequence</em>, <em>delay=12000</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.send_keysequence_window_down"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.send_keysequence_window_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send key press (down) events for the given key sequence</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.send_keysequence_window_list_do">
+<tt class="descname">send_keysequence_window_list_do</tt><big>(</big><em>window</em>, <em>keys</em>, <em>pressed=1</em>, <em>modifier=None</em>, <em>delay=120000</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.send_keysequence_window_list_do"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.send_keysequence_window_list_do" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a series of keystrokes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; The window to send events to or CURRENTWINDOW</li>
+<li><strong>keys</strong> &#8211; The array of charcodemap_t entities to send.</li>
+<li><strong>pressed</strong> &#8211; 1 for key press, 0 for key release.</li>
+<li><strong>modifier</strong> &#8211; Pointer to integer to record the modifiers
+activated by the keys being pressed. If NULL, we don&#8217;t save
+the modifiers.</li>
+<li><strong>delay</strong> &#8211; The delay between keystrokes in microseconds.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.send_keysequence_window_up">
+<tt class="descname">send_keysequence_window_up</tt><big>(</big><em>window</em>, <em>keysequence</em>, <em>delay=12000</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.send_keysequence_window_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.send_keysequence_window_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send key release (up) events for the given key sequence</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_active_modifiers">
+<tt class="descname">set_active_modifiers</tt><big>(</big><em>window</em>, <em>mods=None</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_active_modifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_active_modifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send any events necessary to make these modifiers active.
+This is useful if you just cleared the active modifiers and then wish
+to restore them after.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_current_desktop">
+<tt class="descname">set_current_desktop</tt><big>(</big><em>desktop</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_current_desktop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_current_desktop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch to another desktop.
+Uses <tt class="docutils literal"><span class="pre">_NET_CURRENT_DESKTOP</span></tt> of the EWMH spec.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>desktop</strong> &#8211; The desktop number to switch to.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_desktop_for_window">
+<tt class="descname">set_desktop_for_window</tt><big>(</big><em>window</em>, <em>desktop</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_desktop_for_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_desktop_for_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move a window to another desktop
+Uses _NET_WM_DESKTOP of the EWMH spec.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>wid</strong> &#8211; the window to move</li>
+<li><strong>desktop</strong> &#8211; the desktop destination for the window</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_desktop_viewport">
+<tt class="descname">set_desktop_viewport</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_desktop_viewport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_desktop_viewport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the position of the current viewport.</p>
+<p>This is only relevant if your window manager supports
+<tt class="docutils literal"><span class="pre">_NET_DESKTOP_VIEWPORT</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_number_of_desktops">
+<tt class="descname">set_number_of_desktops</tt><big>(</big><em>ndesktops</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_number_of_desktops"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_number_of_desktops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the number of desktops.
+Uses <tt class="docutils literal"><span class="pre">_NET_NUMBER_OF_DESKTOPS</span></tt> of the EWMH spec.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ndesktops</strong> &#8211; the new number of desktops to set.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_window_class">
+<tt class="descname">set_window_class</tt><big>(</big><em>window</em>, <em>name</em>, <em>class_</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_window_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_window_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the window&#8217;s classname and or class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; The new class name. If <tt class="docutils literal"><span class="pre">None</span></tt>, no change.</li>
+<li><strong>class</strong> &#8211; The new class. If <tt class="docutils literal"><span class="pre">None</span></tt>, no change.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_window_override_redirect">
+<tt class="descname">set_window_override_redirect</tt><big>(</big><em>window</em>, <em>override_redirect</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_window_override_redirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_window_override_redirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the override_redirect value for a window. This generally means
+whether or not a window manager will manage this window.</p>
+<p>If you set it to 1, the window manager will usually not draw
+borders on the window, etc. If you set it to 0, the window manager</p>
+<blockquote>
+<div>will see it like a normal application window.</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_window_property">
+<tt class="descname">set_window_property</tt><big>(</big><em>window</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_window_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_window_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change a window property.</p>
+<p>Example properties you can change are WM_NAME, WM_ICON_NAME, etc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>wid</strong> &#8211; The window to change a property of.</li>
+<li><strong>name</strong> &#8211; the string name of the property.</li>
+<li><strong>value</strong> &#8211; the string value of the property.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_window_size">
+<tt class="descname">set_window_size</tt><big>(</big><em>window</em>, <em>w</em>, <em>h</em>, <em>flags=0</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_window_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_window_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the window size.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>wid</strong> &#8211; the window to resize</li>
+<li><strong>w</strong> &#8211; the new desired width</li>
+<li><strong>h</strong> &#8211; the new desired height</li>
+<li><strong>flags</strong> &#8211; if 0, use pixels for units. If SIZE_USEHINTS, then
+the units will be relative to the window size hints.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.set_window_urgency">
+<tt class="descname">set_window_urgency</tt><big>(</big><em>window</em>, <em>urgency</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.set_window_urgency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.set_window_urgency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the urgency hint for a window</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.translate_window_with_sizehint">
+<tt class="descname">translate_window_with_sizehint</tt><big>(</big><em>window</em>, <em>width</em>, <em>height</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.translate_window_with_sizehint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.translate_window_with_sizehint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a window&#8217;s sizing hints (if any) to a given width and height.</p>
+<p>This function wraps XGetWMNormalHints() and applies any
+resize increment and base size to your given width and height values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>window</strong> &#8211; the window to use</li>
+<li><strong>width</strong> &#8211; the unit width you want to translate</li>
+<li><strong>height</strong> &#8211; the unit height you want to translate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(width, height)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.unmap_window">
+<tt class="descname">unmap_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.unmap_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.unmap_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unmap a window</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wid</strong> &#8211; the window to unmap</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.version">
+<tt class="descname">version</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.wait_for_mouse_move_from">
+<tt class="descname">wait_for_mouse_move_from</tt><big>(</big><em>origin_x</em>, <em>origin_y</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.wait_for_mouse_move_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.wait_for_mouse_move_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for the mouse to move from a location. This function will block
+until the condition has been satisified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>origin_x</strong> &#8211; the X position you expect the mouse to move from</li>
+<li><strong>origin_y</strong> &#8211; the Y position you expect the mouse to move from</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.wait_for_mouse_move_to">
+<tt class="descname">wait_for_mouse_move_to</tt><big>(</big><em>dest_x</em>, <em>dest_y</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.wait_for_mouse_move_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.wait_for_mouse_move_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for the mouse to move to a location. This function will block
+until the condition has been satisified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dest_x</strong> &#8211; the X position you expect the mouse to move to</li>
+<li><strong>dest_y</strong> &#8211; the Y position you expect the mouse to move to</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.wait_for_window_active">
+<tt class="descname">wait_for_window_active</tt><big>(</big><em>window</em>, <em>active=1</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.wait_for_window_active"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.wait_for_window_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for a window to be active or not active.</p>
+<p>Requires your window manager to support this.
+Uses _NET_ACTIVE_WINDOW from the EWMH spec.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; the window to wait on</li>
+<li><strong>active</strong> &#8211; If 1, wait for active. If 0, wait for inactive.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.wait_for_window_focus">
+<tt class="descname">wait_for_window_focus</tt><big>(</big><em>window</em>, <em>want_focus</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.wait_for_window_focus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.wait_for_window_focus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for a window to have or lose focus.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; The window to wait on</li>
+<li><strong>want_focus</strong> &#8211; If 1, wait for focus. If 0, wait for loss of focus.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.wait_for_window_map_state">
+<tt class="descname">wait_for_window_map_state</tt><big>(</big><em>window</em>, <em>state</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.wait_for_window_map_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.wait_for_window_map_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for a window to have a specific map state.</p>
+<dl class="docutils">
+<dt>State possibilities:</dt>
+<dd><p class="first">IsUnmapped - window is not displayed.
+IsViewable - window is mapped and shown (though may be</p>
+<blockquote>
+<div>clipped by windows on top of it)</div></blockquote>
+<p class="last">IsUnviewable - window is mapped but a parent window is unmapped.</p>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>window</strong> &#8211; the window you want to wait for.</li>
+<li><strong>state</strong> &#8211; the state to wait for.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.wait_for_window_size">
+<tt class="descname">wait_for_window_size</tt><big>(</big><em>window</em>, <em>width</em>, <em>height</em>, <em>flags</em>, <em>to_or_from</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.wait_for_window_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.wait_for_window_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.wait_for_window_size_from">
+<tt class="descname">wait_for_window_size_from</tt><big>(</big><em>window</em>, <em>width</em>, <em>height</em>, <em>flags=0</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.wait_for_window_size_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.wait_for_window_size_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xdo.Xdo.wait_for_window_size_to">
+<tt class="descname">wait_for_window_size_to</tt><big>(</big><em>window</em>, <em>width</em>, <em>height</em>, <em>flags=0</em><big>)</big><a class="reference internal" href="_modules/xdo.html#Xdo.wait_for_window_size_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xdo.Xdo.wait_for_window_size_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xdo.input_mask">
+<em class="property">class </em><tt class="descclassname">xdo.</tt><tt class="descname">input_mask</tt><a class="headerlink" href="#xdo.input_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>input_mask(shift, lock, control, mod1, mod2, mod3, mod4, mod5)</p>
+<dl class="attribute">
+<dt id="xdo.input_mask.control">
+<tt class="descname">control</tt><a class="headerlink" href="#xdo.input_mask.control" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.input_mask.lock">
+<tt class="descname">lock</tt><a class="headerlink" href="#xdo.input_mask.lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.input_mask.mod1">
+<tt class="descname">mod1</tt><a class="headerlink" href="#xdo.input_mask.mod1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.input_mask.mod2">
+<tt class="descname">mod2</tt><a class="headerlink" href="#xdo.input_mask.mod2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.input_mask.mod3">
+<tt class="descname">mod3</tt><a class="headerlink" href="#xdo.input_mask.mod3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.input_mask.mod4">
+<tt class="descname">mod4</tt><a class="headerlink" href="#xdo.input_mask.mod4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.input_mask.mod5">
+<tt class="descname">mod5</tt><a class="headerlink" href="#xdo.input_mask.mod5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.input_mask.shift">
+<tt class="descname">shift</tt><a class="headerlink" href="#xdo.input_mask.shift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xdo.mouse_location">
+<em class="property">class </em><tt class="descclassname">xdo.</tt><tt class="descname">mouse_location</tt><a class="headerlink" href="#xdo.mouse_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>mouse_location(x, y, screen_num)</p>
+<dl class="attribute">
+<dt id="xdo.mouse_location.screen_num">
+<tt class="descname">screen_num</tt><a class="headerlink" href="#xdo.mouse_location.screen_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.mouse_location.x">
+<tt class="descname">x</tt><a class="headerlink" href="#xdo.mouse_location.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.mouse_location.y">
+<tt class="descname">y</tt><a class="headerlink" href="#xdo.mouse_location.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xdo.mouse_location2">
+<em class="property">class </em><tt class="descclassname">xdo.</tt><tt class="descname">mouse_location2</tt><a class="headerlink" href="#xdo.mouse_location2" title="Permalink to this definition">¶</a></dt>
+<dd><p>mouse_location2(x, y, screen_num, window)</p>
+<dl class="attribute">
+<dt id="xdo.mouse_location2.screen_num">
+<tt class="descname">screen_num</tt><a class="headerlink" href="#xdo.mouse_location2.screen_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.mouse_location2.window">
+<tt class="descname">window</tt><a class="headerlink" href="#xdo.mouse_location2.window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.mouse_location2.x">
+<tt class="descname">x</tt><a class="headerlink" href="#xdo.mouse_location2.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.mouse_location2.y">
+<tt class="descname">y</tt><a class="headerlink" href="#xdo.mouse_location2.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xdo.window_location">
+<em class="property">class </em><tt class="descclassname">xdo.</tt><tt class="descname">window_location</tt><a class="headerlink" href="#xdo.window_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>window_location(x, y, screen)</p>
+<dl class="attribute">
+<dt id="xdo.window_location.screen">
+<tt class="descname">screen</tt><a class="headerlink" href="#xdo.window_location.screen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.window_location.x">
+<tt class="descname">x</tt><a class="headerlink" href="#xdo.window_location.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.window_location.y">
+<tt class="descname">y</tt><a class="headerlink" href="#xdo.window_location.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xdo.window_size">
+<em class="property">class </em><tt class="descclassname">xdo.</tt><tt class="descname">window_size</tt><a class="headerlink" href="#xdo.window_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>window_size(width, height)</p>
+<dl class="attribute">
+<dt id="xdo.window_size.height">
+<tt class="descname">height</tt><a class="headerlink" href="#xdo.window_size.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xdo.window_size.width">
+<tt class="descname">width</tt><a class="headerlink" href="#xdo.window_size.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to python-libxdo’s documentation!"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Samuele Santi.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1a',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
