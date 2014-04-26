@@ -43,3 +43,4 @@ The library is currently tested on:
 | OS | Architecture | libxdo version | Test result   |
 | -- | -------------| -------------- | ------------- |
 | Debian GNU/Linux "jessie" (testing) | amd64 | 3.20130111.1-3.1 | success |
+|   |   |   |   |
