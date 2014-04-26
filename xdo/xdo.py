@@ -428,59 +428,73 @@ want instead xdo_send_keysequence_window(...).
 """
 
 # ----------------------------------------------------------------------
-#  * Send a keysequence to the specified window.
-#  *
-#  * This allows you to send keysequences by symbol name. Any combination
-#  * of X11 KeySym names separated by '+' are valid. Single KeySym names
-#  * are valid, too.
-#  *
-#  * Examples:
-#  *   "l"
-#  *   "semicolon"
-#  *   "alt+Return"
-#  *   "Alt_L+Tab"
-#  *
-#  * If you want to type a string, such as "Hello world." you want to instead
-#  * use xdo_enter_text_window.
-#  *
-#  * @param window The window you want to send the keysequence to or
-#  *   CURRENTWINDOW
-#  * @param keysequence The string keysequence to send.
-#  * @param delay The delay between keystrokes in microseconds.
-#  */
 # int xdo_send_keysequence_window(const xdo_t *xdo, Window window,
 #                     const char *keysequence, useconds_t delay);
+libxdo.xdo_send_keysequence_window.argtypes = ()
+libxdo.xdo_send_keysequence_window.restype = c_int
+libxdo.xdo_send_keysequence_window.__doc__ = """\
+Send a keysequence to the specified window.
+
+This allows you to send keysequences by symbol name. Any combination
+of X11 KeySym names separated by '+' are valid. Single KeySym names
+are valid, too.
+
+Examples:
+  "l"
+  "semicolon"
+  "alt+Return"
+  "Alt_L+Tab"
+
+If you want to type a string, such as "Hello world." you want to instead
+use xdo_enter_text_window.
+
+:param window: The window you want to send the keysequence to or
+  CURRENTWINDOW
+:param keysequence: The string keysequence to send.
+:param delay: The delay between keystrokes in microseconds.
+"""
 
 # ----------------------------------------------------------------------
-#  * Send key release (up) events for the given key sequence.
-#  *
-#  * @see xdo_send_keysequence_window
-#  */
 # int xdo_send_keysequence_window_up(const xdo_t *xdo, Window window,
 #                        const char *keysequence, useconds_t delay);
+libxdo.xdo_send_keysequence_window_up.argtypes = ()
+libxdo.xdo_send_keysequence_window_up.restype = c_int
+libxdo.xdo_send_keysequence_window_up.__doc__ = """\
+Send key release (up) events for the given key sequence.
+
+@see xdo_send_keysequence_window
+"""
 
 # ----------------------------------------------------------------------
-#  * Send key press (down) events for the given key sequence.
-#  *
-#  * @see xdo_send_keysequence_window
-#  */
 # int xdo_send_keysequence_window_down(const xdo_t *xdo, Window window,
 #                          const char *keysequence, useconds_t delay);
+libxdo.xdo_send_keysequence_window_down.argtypes = ()
+libxdo.xdo_send_keysequence_window_down.restype = c_int
+libxdo.xdo_send_keysequence_window_down.__doc__ = """\
+Send key press (down) events for the given key sequence.
+
+@see xdo_send_keysequence_window
+"""
 
 # ----------------------------------------------------------------------
-#  * Send a series of keystrokes.
-#  *
-#  * @param window The window to send events to or CURRENTWINDOW
-#  * @param keys The array of charcodemap_t entities to send.
-#  * @param nkeys The length of the keys parameter
-#  * @param pressed 1 for key press, 0 for key release.
-#  * @param modifier Pointer to integer to record the modifiers activated by
-#  *   the keys being pressed. If NULL, we don't save the modifiers.
-#  * @param delay The delay between keystrokes in microseconds.
-#  */
 # int xdo_send_keysequence_window_list_do(const xdo_t *xdo, Window window,
 #                             charcodemap_t *keys, int nkeys,
 #                             int pressed, int *modifier, useconds_t delay);
+libxdo.xdo_send_keysequence_window_list_do.argtypes = (
+    POINTER(xdo_t), c_ulong, POINTER(charcodemap_t), c_int, c_int,
+    POINTER(c_int), c_long)
+libxdo.xdo_send_keysequence_window_list_do.restype = c_int
+libxdo.xdo_send_keysequence_window_list_do.__doc__ = """\
+Send a series of keystrokes.
+
+:param window: The window to send events to or CURRENTWINDOW
+:param keys: The array of charcodemap_t entities to send.
+:param nkeys: The length of the keys parameter
+:param pressed: 1 for key press, 0 for key release.
+:param modifier: Pointer to integer to record the modifiers activated by
+  the keys being pressed. If NULL, we don't save the modifiers.
+:param delay: The delay between keystrokes in microseconds.
+"""
 
 # ----------------------------------------------------------------------
 #  * Get a list of active keys. Uses XQueryKeymap.
@@ -491,6 +505,18 @@ want instead xdo_send_keysequence_window(...).
 #  */
 # int xdo_get_active_keys_to_keycode_list(const xdo_t *xdo, charcodemap_t **keys,
 #                                          int *nkeys);
+libxdo.xdo_get_active_keys_to_keycode_list.argtypes = ()
+libxdo.xdo_get_active_keys_to_keycode_list.restype = c_int
+libxdo.xdo_get_active_keys_to_keycode_list.__doc__ = """\
+#  * Get a list of active keys. Uses XQueryKeymap.
+#  *
+#  * @param keys Pointer to the array of charcodemap_t that will be allocated
+#  *    by this function.
+#  * @param nkeys Pointer to integer where the number of keys will be stored.
+#  */
+# int xdo_get_active_keys_to_keycode_list(const xdo_t *xdo, charcodemap_t **keys,
+#                                          int *nkeys);
+"""
 
 # ----------------------------------------------------------------------
 #  * Wait for a window to have a specific map state.
