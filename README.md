@@ -49,7 +49,7 @@ The library is currently tested on:
 
 ## Installation
 
-The package is available on pypy https://pypi.python.org/pypi/python-libxdo/
+The package is available on pypi https://pypi.python.org/pypi/python-libxdo/
 
 Install via pip:
 
