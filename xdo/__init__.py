@@ -1,4 +1,5 @@
 import os
+import sys
 import ctypes
 from ctypes import POINTER
 from collections import namedtuple
@@ -13,6 +14,8 @@ from .xdo import (SEARCH_TITLE, SEARCH_CLASS, SEARCH_NAME, SEARCH_PID,  # noqa
                   SEARCH_DESKTOP)
 from .xdo import XdoException  # noqa
 
+if sys.version_info < (3,):
+        range = xrange
 
 mouse_location = namedtuple('mouse_location', 'x,y,screen_num')
 mouse_location2 = namedtuple('mouse_location2', 'x,y,screen_num,window')
@@ -714,7 +717,7 @@ class Xdo(object):
             ctypes.byref(windowlist_ret),
             ctypes.byref(nwindows_ret))
 
-        return [windowlist_ret[i] for i in xrange(nwindows_ret.value)]
+        return [windowlist_ret[i] for i in range(nwindows_ret.value)]
 
     def get_window_property_by_atom(self, window, atom):
         # todo: figure out what exactly this method does, and implement it
@@ -733,7 +736,7 @@ class Xdo(object):
 
         # todo: we need to convert atoms into their actual type..
         values = []
-        for i in xrange(nitems):
+        for i in range(nitems):
             i_val = value[i]
             # i_type = type_[i]
             values.append(i_val)
@@ -789,7 +792,7 @@ class Xdo(object):
 
         _libxdo.xdo_get_active_modifiers(
             self._xdo, ctypes.byref(keys), ctypes.byref(nkeys))
-        return [keys[i] for i in xrange(nkeys.value)]
+        return [keys[i] for i in range(nkeys.value)]
 
     def clear_active_modifiers(self, window, mods=None):
         """

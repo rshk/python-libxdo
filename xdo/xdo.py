@@ -2,9 +2,13 @@
 Ctypes bindings for libxdo
 """
 
+import sys
 import ctypes
 from ctypes import (Structure, POINTER, c_int, c_char, c_char_p, c_wchar,
                     c_void_p, c_long, c_uint, c_ulong, c_bool)
+
+if sys.version_info < (3,):
+        range = xrange
 
 libxdo = ctypes.CDLL("libxdo.so.3")
 
@@ -172,7 +176,7 @@ SEARCH_CLASSNAME = 1 << 6
 SEARCH_DESKTOP = 1 << 7
 
 
-SEARCH_ANY, SEARCH_ALL = xrange(2)
+SEARCH_ANY, SEARCH_ALL = range(2)
 
 
 class xdo_search_t(Structure):
