@@ -8,7 +8,7 @@ from ctypes import (Structure, POINTER, c_int, c_char, c_char_p, c_wchar,
                     c_void_p, c_long, c_uint, c_ulong, c_bool)
 
 if sys.version_info < (3,):
-        range = xrange
+    range = xrange
 
 libxdo = ctypes.CDLL("libxdo.so.3")
 

@@ -15,7 +15,7 @@ from .xdo import (SEARCH_TITLE, SEARCH_CLASS, SEARCH_NAME, SEARCH_PID,  # noqa
 from .xdo import XdoException  # noqa
 
 if sys.version_info < (3,):
-        range = xrange
+    range = xrange
 
 mouse_location = namedtuple('mouse_location', 'x,y,screen_num')
 mouse_location2 = namedtuple('mouse_location2', 'x,y,screen_num,window')
