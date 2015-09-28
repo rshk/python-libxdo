@@ -4,6 +4,7 @@ from ctypes import POINTER
 from collections import namedtuple
 
 from .xdo import libxdo as _libxdo
+from .xdo import libX11 as _libX11
 from .xdo import charcodemap_t, window_t, Screen, xdo_search_t, Atom
 
 # We simply import constants from the "wrapper" module
@@ -841,11 +842,18 @@ class Xdo(object):
         """
         raise NotImplementedError()
 
-    def get_window_name(self):
+    def get_window_name(self, win_id):
         """
         Get a window's name, if any.
         """
-        raise NotImplementedError()
+        window = window_t(win_id)
+        name_ptr = ctypes.c_char_p()
+        name_len = ctypes.c_int(0)
+        name_type = ctypes.c_int(0)
+        _libxdo.xdo_get_window_name(self._xdo, window, ctypes.byref(name_ptr), ctypes.byref(name_len), ctypes.byref(name_type))
+        name = name_ptr.value
+        _libX11.XFree(name_ptr) #Free the string allocated by Xlib
+        return name
 
     def enable_feature(self):
         """
