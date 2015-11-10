@@ -7,7 +7,7 @@ from ctypes import (Structure, POINTER, c_int, c_char, c_char_p, c_wchar,
                     c_void_p, c_long, c_uint, c_ulong, c_bool)
 
 libxdo = ctypes.CDLL("libxdo.so.3")
-
+libX11 = ctypes.CDLL("libX11.so") #Import XFree
 
 class XdoException(Exception):
     pass
@@ -1394,3 +1394,16 @@ If Xinerama is active and supported, that api internally is used.
 If Xineram is disabled, we will report the root window's dimensions
 for the given screen.
 """
+
+# ============================================================================
+# void XFree(void *data);
+libX11.XFree.argtypes = (c_void_p,)
+libX11.XFree.restype = None
+libX11.XFree.__doc__ = """\
+The XFree function is a general-purpose Xlib routine that frees the specified data.
+You must use it to free any objects that were allocated by Xlib, unless an alternate function is explicitly specified for the object. A NULL pointer cannot be passed to this function.
+
+:param data: Specifies the pointer to data that is to be freed
+"""
+
+# ============================================================================
