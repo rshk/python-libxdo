@@ -627,7 +627,7 @@ Send key release (up) events for the given key sequence.
 # int xdo_send_keysequence_window_down(const xdo_t *xdo, Window window,
 #                          const char *keysequence, useconds_t delay);
 libxdo.xdo_send_keysequence_window_down.argtypes = (
-    POINTER(xdo_t), POINTER(window_t), c_char_p, useconds_t)
+    POINTER(xdo_t), window_t, c_char_p, useconds_t)
 libxdo.xdo_send_keysequence_window_down.restype = c_int
 libxdo.xdo_send_keysequence_window_down.errcheck = _errcheck
 libxdo.xdo_send_keysequence_window_down.__doc__ = """\

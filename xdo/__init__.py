@@ -264,12 +264,12 @@ class Xdo(object):
     def send_keysequence_window_up(self, window, keysequence, delay=12000):
         """Send key release (up) events for the given key sequence"""
         _libxdo.xdo_send_keysequence_window_up(
-            self._xdo, window, keysequence, delay=12000)
+            self._xdo, window, keysequence, ctypes.c_ulong(delay))
 
     def send_keysequence_window_down(self, window, keysequence, delay=12000):
         """Send key press (down) events for the given key sequence"""
         _libxdo.xdo_send_keysequence_window_down(
-            self._xdo, window, keysequence, delay=12000)
+            self._xdo, window, keysequence, ctypes.c_ulong(delay))
 
     def send_keysequence_window_list_do(
             self, window, keys, pressed=1, modifier=None, delay=120000):
