@@ -7,7 +7,8 @@ from ctypes import (Structure, POINTER, c_int, c_char, c_char_p, c_wchar,
                     c_void_p, c_long, c_uint, c_ulong, c_bool)
 
 libxdo = ctypes.CDLL("libxdo.so.3")
-libX11 = ctypes.CDLL("libX11.so") #Import XFree
+libX11 = ctypes.CDLL("libX11.so")  # Import XFree
+
 
 class XdoException(Exception):
     pass
@@ -288,58 +289,58 @@ class _XGC(Structure):
 # Screen is defined in X11/Xlib.h
 class Screen(Structure):
     _fields_ = [
-        #	XExtData *ext_data;	/* hook for extension to hang data */
+        # XExtData *ext_data;	/* hook for extension to hang data */
         ('ext_data', c_void_p),
 
-        #	struct _XDisplay *display;/* back pointer to display structure */
+        # struct _XDisplay *display;/* back pointer to display structure */
         ('display', c_void_p),
 
-        #	Window root;		/* Root window id. */
+        # Window root;		/* Root window id. */
         ('root', window_t),
 
-        #	int width, height;	/* width and height of screen */
+        # int width, height;	/* width and height of screen */
         ('width', c_int),
         ('height', c_int),
 
-        #	int mwidth, mheight;	/* width and height of  in millimeters */
+        # int mwidth, mheight;	/* width and height of  in millimeters */
         ('mwidth', c_int),
         ('mheight', c_int),
 
-        #	int ndepths;		/* number of depths possible */
+        # int ndepths;		/* number of depths possible */
         ('ndepths', c_int),
 
-        #	Depth *depths;		/* list of allowable depths on the screen */
+        # Depth *depths;		/* list of allowable depths on the screen */
         ('depths', c_void_p),
 
-        #	int root_depth;		/* bits per pixel */
+        # int root_depth;		/* bits per pixel */
         ('root_depth', c_int),
 
-        #	Visual *root_visual;	/* root visual */
+        # Visual *root_visual;	/* root visual */
         ('root_visual', c_void_p),
 
-        #	GC default_gc;		/* GC for the root root visual */
+        # GC default_gc;		/* GC for the root root visual */
         ('default_gc', _XGC),
 
-        #	Colormap cmap;		/* default color map */
+        # Colormap cmap;		/* default color map */
         ('cmap', Colormap),
 
-        #	unsigned long white_pixel;
+        # unsigned long white_pixel;
         ('white_pixel', c_ulong),
 
-        #	unsigned long black_pixel;	/* White and Black pixel values */
+        # unsigned long black_pixel;	/* White and Black pixel values */
         ('black_pixel', c_ulong),
 
-        #	int max_maps, min_maps;	/* max and min color maps */
+        # int max_maps, min_maps;	/* max and min color maps */
         ('max_maps', c_int),
         ('min_maps', c_int),
 
-        #	int backing_store;	/* Never, WhenMapped, Always */
+        # int backing_store;	/* Never, WhenMapped, Always */
         ('backing_store', c_int),
 
-        #	Bool save_unders;
+        # Bool save_unders;
         ('save_unders', c_bool),
 
-        #	long root_input_mask;	/* initial root input mask */
+        # long root_input_mask;	/* initial root input mask */
         ('root_input_mask', c_long),
     ]
 
@@ -1400,8 +1401,12 @@ for the given screen.
 libX11.XFree.argtypes = (c_void_p,)
 libX11.XFree.restype = None
 libX11.XFree.__doc__ = """\
-The XFree function is a general-purpose Xlib routine that frees the specified data.
-You must use it to free any objects that were allocated by Xlib, unless an alternate function is explicitly specified for the object. A NULL pointer cannot be passed to this function.
+The XFree function is a general-purpose Xlib routine that frees the
+specified data.
+
+You must use it to free any objects that were allocated by Xlib,
+unless an alternate function is explicitly specified for the object. A
+NULL pointer cannot be passed to this function.
 
 :param data: Specifies the pointer to data that is to be freed
 """
