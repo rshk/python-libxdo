@@ -117,7 +117,8 @@ class Xdo(object):
             The mouse button. Generally, 1 is left, 2 is middle, 3 is
             right, 4 is wheel up, 5 is wheel down.
         """
-        _libxdo.xdo_mouse_down(self._xdo, window, button)
+        _libxdo.xdo_mouse_down(
+            self._xdo, ctypes.c_ulong(window), ctypes.c_int(button))
 
     def mouse_up(self, window, button):
         """
@@ -130,7 +131,8 @@ class Xdo(object):
             The mouse button. Generally, 1 is left, 2 is middle, 3 is
             right, 4 is wheel up, 5 is wheel down.
         """
-        _libxdo.xdo_mouse_up(self._xdo, window, button)
+        _libxdo.xdo_mouse_up(
+            self._xdo, ctypes.c_ulong(window), ctypes.c_int(button))
 
     def get_mouse_location(self):
         """

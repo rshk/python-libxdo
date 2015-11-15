@@ -434,7 +434,7 @@ Move the mouse relative to it's current position.
 
 # ============================================================================
 # int xdo_mouse_down(const xdo_t *xdo, Window window, int button);
-libxdo.xdo_mouse_down.argtypes = (POINTER(xdo_t), POINTER(window_t))
+libxdo.xdo_mouse_down.argtypes = (POINTER(xdo_t), window_t, c_int)
 libxdo.xdo_mouse_down.restype = c_int
 libxdo.xdo_mouse_down.errcheck = _errcheck
 libxdo.xdo_mouse_down.__doc__ = """\
@@ -448,7 +448,7 @@ location.
 
 # ============================================================================
 # int xdo_mouse_up(const xdo_t *xdo, Window window, int button);
-libxdo.xdo_mouse_up.argtypes = (POINTER(xdo_t), POINTER(window_t), c_int)
+libxdo.xdo_mouse_up.argtypes = (POINTER(xdo_t), window_t, c_int)
 libxdo.xdo_mouse_up.restype = c_int
 libxdo.xdo_mouse_up.errcheck = _errcheck
 libxdo.xdo_mouse_up.__doc__ = """\
