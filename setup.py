@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.1a'
+version = '0.1.1a'
 install_requires = []
 
 setup(
@@ -20,7 +20,6 @@ setup(
     install_requires=install_requires,
     # test_suite='tests',
     classifiers=[
-        # "License :: OSI Approved :: Apache Software License",
         "License :: OSI Approved :: BSD License",
 
         "Development Status :: 1 - Planning",
@@ -31,7 +30,7 @@ setup(
         # "Development Status :: 6 - Mature",
         # "Development Status :: 7 - Inactive",
 
-        ## Support for python 3 is planned, but not tested yet
+        # Support for python 3 is planned, but not tested yet
         "Programming Language :: Python :: 2",
         # "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
@@ -40,8 +39,8 @@ setup(
         # "Programming Language :: Python :: 3.3",
         # "Programming Language :: Python :: 3.4",
 
-        ## Should work on all implementations, but further
-        ## testing is still needed..
+        # Should work on all implementations, but further
+        # testing is still needed..
         "Programming Language :: Python :: Implementation :: CPython",
         # "Programming Language :: Python :: Implementation :: PyPy",
     ],
