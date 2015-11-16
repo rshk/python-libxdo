@@ -3,6 +3,7 @@ import ctypes
 from ctypes import POINTER
 from collections import namedtuple
 
+from .xdo import XErrorHandler
 from .xdo import libxdo as _libxdo
 from .xdo import libX11 as _libX11
 from .xdo import charcodemap_t, window_t, Screen, xdo_search_t, Atom
@@ -53,11 +54,23 @@ def _gen_input_mask(mask):
         mod5=bool(mask & MOD_Mod5))
 
 
+class XError(Exception):
+    pass
+
+
 class Xdo(object):
     def __init__(self, display=None):
         if display is None:
             display = os.environ.get('DISPLAY', '')
         self._xdo = _libxdo.xdo_new(display)
+
+        def _handle_x_error(evt):
+            # todo: handle errors in a nicer way, eg. try getting error message
+            raise XError('Event: {}'.format(evt))
+
+        self._error_handler = XErrorHandler(_handle_x_error)
+
+        _libX11.XSetErrorHandler(self._error_handler)
 
     def version(self):
         return _libxdo.xdo_version()

@@ -4,10 +4,24 @@ Ctypes bindings for libxdo
 
 import ctypes
 from ctypes import (Structure, POINTER, c_int, c_char, c_char_p, c_wchar,
-                    c_void_p, c_long, c_uint, c_ulong, c_bool)
+                    c_void_p, c_long, c_uint, c_ulong, c_bool, c_uint8 as c_uchar)
 
 libxdo = ctypes.CDLL("libxdo.so.3")
 libX11 = ctypes.CDLL("libX11.so")  # Import XFree
+
+XDO_ERROR = 1
+XDO_SUCCESS = 0
+
+# Window type is just defined as ``unsigned long``
+window_t = c_ulong
+useconds_t = c_ulong
+# screen_t = c_ulong  # warning! this is simply guessed!
+
+XID = c_ulong
+Colormap = XID
+GContext = XID
+Pixmap = XID
+Font = XID
 
 
 class XdoException(Exception):
@@ -148,6 +162,26 @@ class xdo_t(Structure):
     ]
 
 
+class XErrorEvent(Structure):
+    _fields = [
+        # int type;
+        ('type', c_int),
+        # Display *display;       /* Display the event was read from */
+        ('display', c_void_p),
+        # XID resourceid;         /* resource id */
+        ('resourceid', XID),
+        # unsigned long serial;   /* serial number of failed request */
+        ('serial', c_ulong),
+        # unsigned char error_code;       /* error code of failed request */
+        ('error_code', c_uchar),
+        # unsigned char request_code;     /* Major op-code of failed request */
+        ('request_code', c_uchar),
+        # unsigned char minor_code;       /* Minor op-code of failed request */
+        ('minor_code', c_uchar),
+    ]
+
+
+
 # Search only window title. DEPRECATED - Use SEARCH_NAME
 SEARCH_TITLE = 1 << 0
 
@@ -229,20 +263,6 @@ class xdo_search_t(Structure):
         # unsigned int limit;
         ('limit', c_uint),
     ]
-
-XDO_ERROR = 1
-XDO_SUCCESS = 0
-
-# Window type is just defined as ``unsigned long``
-window_t = c_ulong
-useconds_t = c_ulong
-# screen_t = c_ulong  # warning! this is simply guessed!
-
-XID = c_ulong
-Colormap = XID
-GContext = XID
-Pixmap = XID
-Font = XID
 
 
 # Defined in X11/Xlib.h
@@ -1411,4 +1431,10 @@ NULL pointer cannot be passed to this function.
 :param data: Specifies the pointer to data that is to be freed
 """
 
+# ============================================================================
+# typedef int (*XErrorHandler) (      /* WARNING, this type not in Xlib spec */
+#     Display*            /* display */,
+#     XErrorEvent*        /* error_event */
+# );
+XErrorHandler = ctypes.CFUNCTYPE(c_int, POINTER(XErrorEvent))
 # ============================================================================
