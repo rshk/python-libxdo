@@ -1,8 +1,10 @@
-.venv*
 *.egg
 *.egg-info
+*.pyc
+*~
+.#*
+.cache
+.tox
+.venv*
 /build
 /dist
-*~
-*.pyc
-.#*
