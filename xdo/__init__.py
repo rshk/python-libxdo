@@ -117,7 +117,8 @@ class Xdo(object):
             The mouse button. Generally, 1 is left, 2 is middle, 3 is
             right, 4 is wheel up, 5 is wheel down.
         """
-        _libxdo.xdo_mouse_down(self._xdo, window, button)
+        _libxdo.xdo_mouse_down(
+            self._xdo, ctypes.c_ulong(window), ctypes.c_int(button))
 
     def mouse_up(self, window, button):
         """
@@ -130,7 +131,8 @@ class Xdo(object):
             The mouse button. Generally, 1 is left, 2 is middle, 3 is
             right, 4 is wheel up, 5 is wheel down.
         """
-        _libxdo.xdo_mouse_up(self._xdo, window, button)
+        _libxdo.xdo_mouse_up(
+            self._xdo, ctypes.c_ulong(window), ctypes.c_int(button))
 
     def get_mouse_location(self):
         """
@@ -540,20 +542,20 @@ class Xdo(object):
         """
         Get a window's location.
         """
-        screen_ret = POINTER(Screen)
+        screen_ret = Screen()
         x_ret = ctypes.c_int(0)
         y_ret = ctypes.c_int(0)
         _libxdo.xdo_get_window_location(
             self._xdo, window, ctypes.byref(x_ret), ctypes.byref(y_ret),
             ctypes.byref(screen_ret))
-        return window_location(x_ret.value, y_ret.value, screen_ret.value)
+        return window_location(x_ret.value, y_ret.value, screen_ret)
 
     def get_window_size(self, window):
         """
         Get a window's size.
         """
-        w_ret = ctypes.c_int(0)
-        h_ret = ctypes.c_int(0)
+        w_ret = ctypes.c_uint(0)
+        h_ret = ctypes.c_uint(0)
         _libxdo.xdo_get_window_size(self._xdo, window, ctypes.byref(w_ret),
                                     ctypes.byref(h_ret))
         return window_size(w_ret.value, h_ret.value)
