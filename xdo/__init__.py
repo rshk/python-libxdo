@@ -7,6 +7,7 @@ from .xdo import XErrorHandler
 from .xdo import libxdo as _libxdo
 from .xdo import libX11 as _libX11
 from .xdo import charcodemap_t, window_t, Screen, xdo_search_t, Atom
+from six.moves import range
 
 # We simply import constants from the "wrapper" module
 # in the package namespace
@@ -62,6 +63,7 @@ class Xdo(object):
     def __init__(self, display=None):
         if display is None:
             display = os.environ.get('DISPLAY', '')
+        display = display.encode('utf-8')
         self._xdo = _libxdo.xdo_new(display)
 
         def _handle_x_error(evt):
@@ -730,7 +732,7 @@ class Xdo(object):
             ctypes.byref(windowlist_ret),
             ctypes.byref(nwindows_ret))
 
-        return [windowlist_ret[i] for i in xrange(nwindows_ret.value)]
+        return [windowlist_ret[i] for i in range(nwindows_ret.value)]
 
     def get_window_property_by_atom(self, window, atom):
         # todo: figure out what exactly this method does, and implement it
@@ -749,7 +751,7 @@ class Xdo(object):
 
         # todo: we need to convert atoms into their actual type..
         values = []
-        for i in xrange(nitems):
+        for i in range(nitems):
             i_val = value[i]
             # i_type = type_[i]
             values.append(i_val)
@@ -805,7 +807,7 @@ class Xdo(object):
 
         _libxdo.xdo_get_active_modifiers(
             self._xdo, ctypes.byref(keys), ctypes.byref(nkeys))
-        return [keys[i] for i in xrange(nkeys.value)]
+        return [keys[i] for i in range(nkeys.value)]
 
     def clear_active_modifiers(self, window, mods=None):
         """

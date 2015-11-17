@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 version = '0.1.1a'
-install_requires = []
+install_requires = ['six']
 
 setup(
     name='python-libxdo',
