@@ -207,7 +207,8 @@ SEARCH_CLASSNAME = 1 << 6
 SEARCH_DESKTOP = 1 << 7
 
 
-SEARCH_ANY, SEARCH_ALL = xrange(2)
+SEARCH_ANY = 0
+SEARCH_ALL = 1
 
 
 class xdo_search_t(Structure):
