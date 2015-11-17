@@ -103,7 +103,11 @@ class Xdo(object):
         #   Current serial number in output stream:  26
 
         # Just to be safe..
-        screen = 0
+        # screen = 0
+
+        x = ctypes.c_int(x)
+        y = ctypes.c_int(y)
+        screen = ctypes.c_int(screen)
 
         _libxdo.xdo_move_mouse(self._xdo, x, y, screen)
 
@@ -115,7 +119,8 @@ class Xdo(object):
         :param x: the target X coordinate on the screen in pixels.
         :param y: the target Y coordinate on the screen in pixels.
         """
-        _libxdo.xdo_move_mouse_relative_to_window(self._xdo, window, x, y)
+        _libxdo.xdo_move_mouse_relative_to_window(
+            self._xdo, ctypes.c_ulong(window), x, y)
 
     def move_mouse_relative(self, x, y):
         """
