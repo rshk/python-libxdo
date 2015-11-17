@@ -1,10 +1,15 @@
+# -*- coding: utf-8 -*-
+
 """
 Ctypes bindings for libxdo
 """
 
 import ctypes
-from ctypes import (Structure, POINTER, c_int, c_char, c_char_p, c_wchar,
-                    c_void_p, c_long, c_uint, c_ulong, c_bool, c_uint8 as c_uchar)
+from ctypes import c_uint8 as c_uchar
+from ctypes import (
+    POINTER, Structure, c_bool, c_char, c_char_p, c_int, c_long, c_uint,
+    c_ulong, c_void_p, c_wchar)
+
 from ctypes.util import find_library
 
 libxdo = ctypes.CDLL(find_library("xdo"))
@@ -180,7 +185,6 @@ class XErrorEvent(Structure):
         # unsigned char minor_code;       /* Minor op-code of failed request */
         ('minor_code', c_uchar),
     ]
-
 
 
 # Search only window title. DEPRECATED - Use SEARCH_NAME

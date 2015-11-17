@@ -1,21 +1,20 @@
-import os
-import ctypes
-from ctypes import POINTER
-from collections import namedtuple
+# -*- coding: utf-8 -*-
 
-from .xdo import XErrorHandler
-from .xdo import libxdo as _libxdo
-from .xdo import libX11 as _libX11
-from .xdo import charcodemap_t, window_t, Screen, xdo_search_t, Atom
+import ctypes
+import os
+from collections import namedtuple
+from ctypes import POINTER
+
 from six.moves import range
 
-# We simply import constants from the "wrapper" module
-# in the package namespace
-from .xdo import (SEARCH_TITLE, SEARCH_CLASS, SEARCH_NAME, SEARCH_PID,  # noqa
-                  SEARCH_ONLYVISIBLE, SEARCH_SCREEN, SEARCH_CLASSNAME,
-                  SEARCH_DESKTOP)
-from .xdo import XdoException  # noqa
+from .xdo import libX11 as _libX11
+from .xdo import libxdo as _libxdo
+from .xdo import (  # noqa
+    SEARCH_CLASS, SEARCH_CLASSNAME, SEARCH_DESKTOP, SEARCH_NAME,
+    SEARCH_ONLYVISIBLE, SEARCH_PID, SEARCH_SCREEN, SEARCH_TITLE, Atom, Screen,
+    XErrorHandler, charcodemap_t, window_t, xdo_search_t)
 
+from .xdo import XdoException  # noqa; noqa
 
 mouse_location = namedtuple('mouse_location', 'x,y,screen_num')
 mouse_location2 = namedtuple('mouse_location2', 'x,y,screen_num,window')
