@@ -74,8 +74,13 @@ class Xdo(object):
 
         _libX11.XSetErrorHandler(self._error_handler)
 
-    def version(self):
+    @classmethod
+    def version(cls):
         return _libxdo.xdo_version()
+
+    @classmethod
+    def version_info(cls):
+        return tuple(int(x) for x in cls.version().split(b'.'))
 
     def move_mouse(self, x, y, screen=0):
         """
