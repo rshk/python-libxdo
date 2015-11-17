@@ -5,9 +5,10 @@ Ctypes bindings for libxdo
 import ctypes
 from ctypes import (Structure, POINTER, c_int, c_char, c_char_p, c_wchar,
                     c_void_p, c_long, c_uint, c_ulong, c_bool, c_uint8 as c_uchar)
+from ctypes.util import find_library
 
-libxdo = ctypes.CDLL("libxdo.so.3")
-libX11 = ctypes.CDLL("libX11.so")  # Import XFree
+libxdo = ctypes.CDLL(find_library("xdo"))
+libX11 = ctypes.CDLL(find_library("X11"))  # Import XFree
 
 XDO_ERROR = 1
 XDO_SUCCESS = 0
