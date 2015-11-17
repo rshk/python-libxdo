@@ -1,20 +1,20 @@
-import os
+# -*- coding: utf-8 -*-
+
 import ctypes
-from ctypes import POINTER
+import os
 from collections import namedtuple
+from ctypes import POINTER
 
-from .xdo import XErrorHandler
-from .xdo import libxdo as _libxdo
+from six.moves import range
+
 from .xdo import libX11 as _libX11
-from .xdo import charcodemap_t, window_t, Screen, xdo_search_t, Atom
+from .xdo import libxdo as _libxdo
+from .xdo import (  # noqa
+    SEARCH_CLASS, SEARCH_CLASSNAME, SEARCH_DESKTOP, SEARCH_NAME,
+    SEARCH_ONLYVISIBLE, SEARCH_PID, SEARCH_SCREEN, SEARCH_TITLE, Atom, Screen,
+    XErrorHandler, charcodemap_t, window_t, xdo_search_t)
 
-# We simply import constants from the "wrapper" module
-# in the package namespace
-from .xdo import (SEARCH_TITLE, SEARCH_CLASS, SEARCH_NAME, SEARCH_PID,  # noqa
-                  SEARCH_ONLYVISIBLE, SEARCH_SCREEN, SEARCH_CLASSNAME,
-                  SEARCH_DESKTOP)
-from .xdo import XdoException  # noqa
-
+from .xdo import XdoException  # noqa; noqa
 
 mouse_location = namedtuple('mouse_location', 'x,y,screen_num')
 mouse_location2 = namedtuple('mouse_location2', 'x,y,screen_num,window')
@@ -62,6 +62,7 @@ class Xdo(object):
     def __init__(self, display=None):
         if display is None:
             display = os.environ.get('DISPLAY', '')
+        display = display.encode('utf-8')
         self._xdo = _libxdo.xdo_new(display)
 
         def _handle_x_error(evt):
@@ -72,8 +73,13 @@ class Xdo(object):
 
         _libX11.XSetErrorHandler(self._error_handler)
 
-    def version(self):
+    @classmethod
+    def version(cls):
         return _libxdo.xdo_version()
+
+    @classmethod
+    def version_info(cls):
+        return tuple(int(x) for x in cls.version().split(b'.'))
 
     def move_mouse(self, x, y, screen=0):
         """
@@ -96,7 +102,11 @@ class Xdo(object):
         #   Current serial number in output stream:  26
 
         # Just to be safe..
-        screen = 0
+        # screen = 0
+
+        x = ctypes.c_int(x)
+        y = ctypes.c_int(y)
+        screen = ctypes.c_int(screen)
 
         _libxdo.xdo_move_mouse(self._xdo, x, y, screen)
 
@@ -108,7 +118,8 @@ class Xdo(object):
         :param x: the target X coordinate on the screen in pixels.
         :param y: the target Y coordinate on the screen in pixels.
         """
-        _libxdo.xdo_move_mouse_relative_to_window(self._xdo, window, x, y)
+        _libxdo.xdo_move_mouse_relative_to_window(
+            self._xdo, ctypes.c_ulong(window), x, y)
 
     def move_mouse_relative(self, x, y):
         """
@@ -730,7 +741,7 @@ class Xdo(object):
             ctypes.byref(windowlist_ret),
             ctypes.byref(nwindows_ret))
 
-        return [windowlist_ret[i] for i in xrange(nwindows_ret.value)]
+        return [windowlist_ret[i] for i in range(nwindows_ret.value)]
 
     def get_window_property_by_atom(self, window, atom):
         # todo: figure out what exactly this method does, and implement it
@@ -749,7 +760,7 @@ class Xdo(object):
 
         # todo: we need to convert atoms into their actual type..
         values = []
-        for i in xrange(nitems):
+        for i in range(nitems):
             i_val = value[i]
             # i_type = type_[i]
             values.append(i_val)
@@ -805,7 +816,7 @@ class Xdo(object):
 
         _libxdo.xdo_get_active_modifiers(
             self._xdo, ctypes.byref(keys), ctypes.byref(nkeys))
-        return [keys[i] for i in xrange(nkeys.value)]
+        return [keys[i] for i in range(nkeys.value)]
 
     def clear_active_modifiers(self, window, mods=None):
         """

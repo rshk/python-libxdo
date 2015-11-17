@@ -1,0 +1,4 @@
+#!/bin/bash
+
+SCREEN_MODE="1024x800x24"
+exec xvfb-run -n 98 -s "-screen 0 ${SCREEN_MODE} -screen 1 ${SCREEN_MODE}" "$@"

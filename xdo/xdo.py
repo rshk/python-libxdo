@@ -1,13 +1,19 @@
+# -*- coding: utf-8 -*-
+
 """
 Ctypes bindings for libxdo
 """
 
 import ctypes
-from ctypes import (Structure, POINTER, c_int, c_char, c_char_p, c_wchar,
-                    c_void_p, c_long, c_uint, c_ulong, c_bool, c_uint8 as c_uchar)
+from ctypes import c_uint8 as c_uchar
+from ctypes import (
+    POINTER, Structure, c_bool, c_char, c_char_p, c_int, c_long, c_uint,
+    c_ulong, c_void_p, c_wchar)
 
-libxdo = ctypes.CDLL("libxdo.so.3")
-libX11 = ctypes.CDLL("libX11.so")  # Import XFree
+from ctypes.util import find_library
+
+libxdo = ctypes.CDLL(find_library("xdo"))
+libX11 = ctypes.CDLL(find_library("X11"))  # Import XFree
 
 XDO_ERROR = 1
 XDO_SUCCESS = 0
@@ -181,7 +187,6 @@ class XErrorEvent(Structure):
     ]
 
 
-
 # Search only window title. DEPRECATED - Use SEARCH_NAME
 SEARCH_TITLE = 1 << 0
 
@@ -207,7 +212,8 @@ SEARCH_CLASSNAME = 1 << 6
 SEARCH_DESKTOP = 1 << 7
 
 
-SEARCH_ANY, SEARCH_ALL = xrange(2)
+SEARCH_ANY = 0
+SEARCH_ALL = 1
 
 
 class xdo_search_t(Structure):

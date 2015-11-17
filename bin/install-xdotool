@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+mkdir -p build/xdotool
+cd build/xdotool
+git clone https://github.com/jordansissel/xdotool
+cd xdotool
+make
+sudo make install
