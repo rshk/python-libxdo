@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-
+import tempfile
+from shutil import rmtree
 import os
 import subprocess
-import time
-from tempfile import NamedTemporaryFile
-
 import pytest
 
 
@@ -34,15 +32,35 @@ def xvfb():
 
 @pytest.yield_fixture(scope='function')
 def xterm_window(xvfb):
-    with NamedTemporaryFile() as tf:
-        proc = subprocess.Popen(
-            ['xterm', '-T', 'My window title',
-             '-e', 'echo "$WINDOWID" > "{}"; bash'.format(tf.name)])
-        time.sleep(.100)
-        with open(tf.name, 'rb') as fp:
-            window_id = int(fp.read())
-    yield XtermProcessInfo(proc=proc, window_id=window_id)
-    proc.terminate()
+    """
+    Create an xterm window test fixture.  This fixture opens a new xterm
+    window and yields its the X window id.  Upon test completion the xterm
+    process is cleaned up.
+    :param xvfb:
+    :return:
+    """
+    directory = tempfile.mkdtemp()
+    xterm_pipe_path = os.path.join(directory, 'xterm_pipe')
+    xterm_proc = None
+
+    try:
+        os.mkfifo(xterm_pipe_path)
+        xterm_proc = subprocess.Popen([
+            'xterm', '-T', 'My window title', '-e',
+            'echo "$WINDOWID" > "{}"; bash'.format(xterm_pipe_path)
+        ])
+        with open(xterm_pipe_path, 'r') as pipe:
+            window_id = int(pipe.read())
+        yield XtermProcessInfo(proc=xterm_proc, window_id=window_id)
+    except OSError as e:
+        raise OSError('Failed to create FIFO pipe for xterm process: %s' % e)
+    except ValueError as e:
+        raise ValueError('Failed to fetch xterm window id: %s' % e)
+    finally:
+        if os.path.exists(directory):
+            rmtree(directory)
+        if xterm_proc:
+            xterm_proc.terminate()
 
 
 @pytest.fixture(scope='function')
