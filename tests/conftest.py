@@ -52,10 +52,6 @@ def xterm_window(xvfb):
         with open(xterm_pipe_path, 'r') as pipe:
             window_id = int(pipe.read())
         yield XtermProcessInfo(proc=xterm_proc, window_id=window_id)
-    except OSError as e:
-        raise OSError('Failed to create FIFO pipe for xterm process: %s' % e)
-    except ValueError as e:
-        raise ValueError('Failed to fetch xterm window id: %s' % e)
     finally:
         if os.path.exists(directory):
             rmtree(directory)
