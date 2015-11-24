@@ -3,6 +3,7 @@ import tempfile
 from shutil import rmtree
 import os
 import subprocess
+from py._path.local import LocalPath
 import pytest
 
 
@@ -31,7 +32,7 @@ def xvfb():
 
 
 @pytest.yield_fixture(scope='function')
-def xterm_window(xvfb):
+def xterm_window(xvfb, tmpdir):
     """
     Create an xterm window test fixture.  This fixture opens a new xterm
     window and yields its the X window id.  Upon test completion the xterm
@@ -39,8 +40,7 @@ def xterm_window(xvfb):
     :param xvfb:
     :return:
     """
-    directory = tempfile.mkdtemp()
-    xterm_pipe_path = os.path.join(directory, 'xterm_pipe')
+    xterm_pipe_path = tmpdir.join('xterm_pipe').strpath
     xterm_proc = None
 
     try:
@@ -53,8 +53,6 @@ def xterm_window(xvfb):
             window_id = int(pipe.read())
         yield XtermProcessInfo(proc=xterm_proc, window_id=window_id)
     finally:
-        if os.path.exists(directory):
-            rmtree(directory)
         if xterm_proc:
             xterm_proc.terminate()
 
