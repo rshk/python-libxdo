@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-import tempfile
-from shutil import rmtree
 import os
 import subprocess
-from py._path.local import LocalPath
 import pytest
 
 
