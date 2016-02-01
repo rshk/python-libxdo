@@ -75,7 +75,7 @@ SIZE_USEHINTS_Y = 1 << 2
 # Generally, this means we will use XTEST instead of XSendEvent when sending
 # events.
 
-CURRENTWINDOW = 0
+CURRENTWINDOW = ctypes.c_ulong(0)
 
 
 KeyCode = c_char  # unsinged char
