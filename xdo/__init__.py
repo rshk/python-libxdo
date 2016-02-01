@@ -7,9 +7,9 @@ from ctypes import POINTER
 
 from six.moves import range
 
-from .xdo import libX11 as _libX11
-from .xdo import libxdo as _libxdo
-from .xdo import (  # noqa
+from ._xdo import libX11 as _libX11
+from ._xdo import libxdo as _libxdo
+from ._xdo import (  # noqa
     CURRENTWINDOW, SEARCH_CLASS, SEARCH_CLASSNAME, SEARCH_DESKTOP, SEARCH_NAME,
     SEARCH_ONLYVISIBLE, SEARCH_PID, SEARCH_SCREEN, SEARCH_TITLE, Atom, Screen,
     XdoException, XErrorHandler, charcodemap_t, window_t, xdo_search_t)
