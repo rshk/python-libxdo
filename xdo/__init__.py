@@ -10,11 +10,10 @@ from six.moves import range
 from .xdo import libX11 as _libX11
 from .xdo import libxdo as _libxdo
 from .xdo import (  # noqa
-    SEARCH_CLASS, SEARCH_CLASSNAME, SEARCH_DESKTOP, SEARCH_NAME,
+    CURRENTWINDOW, SEARCH_CLASS, SEARCH_CLASSNAME, SEARCH_DESKTOP, SEARCH_NAME,
     SEARCH_ONLYVISIBLE, SEARCH_PID, SEARCH_SCREEN, SEARCH_TITLE, Atom, Screen,
-    XErrorHandler, charcodemap_t, window_t, xdo_search_t)
+    XdoException, XErrorHandler, charcodemap_t, window_t, xdo_search_t)
 
-from .xdo import XdoException  # noqa; noqa
 
 mouse_location = namedtuple('mouse_location', 'x,y,screen_num')
 mouse_location2 = namedtuple('mouse_location2', 'x,y,screen_num,window')
