@@ -1,16 +1,25 @@
-from setuptools import setup, find_packages
+import os
 
-version = '0.1.1a0'
+from setuptools import find_packages, setup
+
+version = '0.1.2a0'
 install_requires = ['six']
+
+here = os.path.dirname(__file__)
+
+with open(os.path.join(here, 'README.rst')) as fp:
+    longdesc = fp.read()
+
+with open(os.path.join(here, 'CHANGELOG.rst')) as fp:
+    longdesc += "\n\n" + fp.read()
 
 setup(
     name='python-libxdo',
     version=version,
     packages=find_packages(),
-    url='',
+    url='https://github.com/rshk/python-libxdo',
 
-    # ..or whatever, actually..
-    # Which is the xdotool license, btw?
+    # 3-clause BSD, same as xdotool
     license='BSD License',
 
     author='Samuele Santi',
@@ -20,28 +29,23 @@ setup(
     install_requires=install_requires,
     # test_suite='tests',
     classifiers=[
-        "License :: OSI Approved :: BSD License",
+        "License :: OSI Approved :: BSD License",  # 3-clause
 
-        "Development Status :: 1 - Planning",
+        # "Development Status :: 1 - Planning",
         # "Development Status :: 2 - Pre-Alpha",
-        # "Development Status :: 3 - Alpha",
+        "Development Status :: 3 - Alpha",
         # "Development Status :: 4 - Beta",
         # "Development Status :: 5 - Production/Stable",
         # "Development Status :: 6 - Mature",
         # "Development Status :: 7 - Inactive",
 
-        # Support for python 3 is planned, but not tested yet
         "Programming Language :: Python :: 2",
-        # "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
-        # "Programming Language :: Python :: 3.1",
-        # "Programming Language :: Python :: 3.2",
-        # "Programming Language :: Python :: 3.3",
-        # "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
 
-        # Should work on all implementations, but further
-        # testing is still needed..
+        # Only CPython is supported at the moment
         "Programming Language :: Python :: Implementation :: CPython",
         # "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    package_data={'': ['README.md', 'LICENSE']})
+    package_data={'': ['README.rst', 'LICENSE', 'CHANGELOG.rst']})
