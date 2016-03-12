@@ -2,7 +2,7 @@ import os
 
 from setuptools import find_packages, setup
 
-version = '0.1.2a0'
+version = '0.1.2a1'
 install_requires = ['six']
 
 here = os.path.dirname(__file__)
