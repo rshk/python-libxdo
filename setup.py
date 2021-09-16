@@ -1,6 +1,9 @@
 import os
 
 from setuptools import find_packages, setup
+from distutils.core import setup
+import distutils.command.bdist_rpm
+import distutils.command.install
 
 version = '0.1.2a1'
 install_requires = ['six']
@@ -12,6 +15,23 @@ with open(os.path.join(here, 'README.rst')) as fp:
 
 with open(os.path.join(here, 'CHANGELOG.rst')) as fp:
     longdesc += "\n\n" + fp.read()
+
+class bdist_rpm(distutils.command.bdist_rpm.bdist_rpm):
+
+    def _make_spec_file(self):
+        spec = distutils.command.bdist_rpm.bdist_rpm._make_spec_file(self)
+        for path, files , perm in permissions:
+
+            ##
+            # Add a line to the SPEC file to change the permissions of a
+            # specific file upon install.
+            #
+            # example:
+            #   %attr(666, root, root) path/file
+            #
+            spec.extend(['%attr{} {}/{}'.format(perm, path, files)])
+
+        return spec
 
 setup(
     name='python-libxdo',
