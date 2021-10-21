@@ -236,6 +236,9 @@ class xdo_search_t(Structure):
         # const char *winname; pattern to test against a window name
         ('winname', c_char_p),
 
+        # const char *winrole; pattern to test against a window role
+        ('winrole', c_char_p),
+
         # int pid; window pid (From window atom _NET_WM_PID)
         ('pid', c_int),
 
