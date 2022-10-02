@@ -169,7 +169,7 @@ class xdo_t(Structure):
 
 
 class XErrorEvent(Structure):
-    _fields = [
+    _fields_ = [
         # int type;
         ('type', c_int),
         # Display *display;       /* Display the event was read from */
@@ -435,7 +435,7 @@ Move the mouse to a specific location.
 # int xdo_move_mouse_relative_to_window(const xdo_t *xdo,
 #     Window window, int x, int y);
 libxdo.xdo_move_mouse_relative_to_window.argtypes = (
-    POINTER(xdo_t), POINTER(window_t), c_int, c_int)
+    POINTER(xdo_t), window_t, c_int, c_int)
 libxdo.xdo_move_mouse_relative_to_window.restype = c_int
 libxdo.xdo_move_mouse_relative_to_window.errcheck = _errcheck
 libxdo.xdo_move_mouse_relative_to_window.__doc__ = """\
